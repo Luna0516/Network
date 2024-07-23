@@ -14,12 +14,23 @@ public class Managers : MonoBehaviour
         }
     }
 
+    // 구형
     InputManager _input = new InputManager();
     public static InputManager Input
     {
         get
         {
             return Instance._input;
+        }
+    }
+
+    // 구형
+    ResourceManager _resource = new ResourceManager();
+    public ResourceManager Resource
+    {
+        get
+        {
+            return Instance._resource;
         }
     }
 
