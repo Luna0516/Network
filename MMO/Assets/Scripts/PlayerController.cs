@@ -15,12 +15,12 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (Input.GetKey(KeyCode.W))
-            transform.position += Vector3.forward * Time.deltaTime * _speed;
+            transform.Translate(Vector3.forward * Time.deltaTime * _speed);
         if(Input.GetKey(KeyCode.S))
-            transform.position += Vector3.back * Time.deltaTime * _speed;
+            transform.Translate(Vector3.back * Time.deltaTime * _speed);
         if (Input.GetKey(KeyCode.D))
-            transform.position += Vector3.right * Time.deltaTime * _speed;
-        if(Input.GetKey(KeyCode.A))
-            transform.position += Vector3.left * Time.deltaTime * _speed;
+            transform.Translate(Vector3.right * Time.deltaTime * _speed);
+        if (Input.GetKey(KeyCode.A))
+            transform.Translate(Vector3.left * Time.deltaTime * _speed);
     }
 }
