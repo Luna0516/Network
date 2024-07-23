@@ -1,6 +1,57 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+
+struct MyVector
+{
+    public float x;
+    public float y;
+    public float z;
+
+    public MyVector(float x, float y, float z)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+    public float magnitude
+    {
+        get
+        {
+            return (float)Math.Sqrt(x * x + y * y + z * z);
+        }
+    }
+
+    public MyVector normalized
+    {
+        get
+        {
+            return new MyVector(x / magnitude, y / magnitude, z / magnitude);
+        }
+    }
+
+    public static MyVector operator +(MyVector a, MyVector b)
+    {
+        return new MyVector(a.x + b.x, a.y + b.y, a.z + b.z);
+    }
+
+    public static MyVector operator -(MyVector a, MyVector b)
+    {
+        return new MyVector(a.x - b.x, a.y - b.y, a.z - b.z);
+    }
+
+    public static MyVector operator *(MyVector a, float d)
+    {
+        return new MyVector(a.x * d, a.y * d, a.z * d);
+    }
+
+    public static MyVector operator *(float d, MyVector a)
+    {
+        return new MyVector(a.x * d, a.y * d, a.z * d);
+    }
+}
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,7 +60,13 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        
+        MyVector to = new MyVector(10.0f, 0.0f, 0.0f);
+        MyVector from = new MyVector(5.0f, 0.0f, 0.0f);
+
+        MyVector dir = to - from;
+        dir = dir.normalized;
+
+        MyVector newPos = from + dir * _speed;
     }
 
     void Update()
