@@ -13,6 +13,13 @@ public class TestRaycast : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Local <-> World <-> Viewport <-> Screen(화면)
+
+        // Debug.Log(Input.mousePosition); // Screen
+
+        // Debug.Log(Camera.main.ScreenToViewportPoint(Input.mousePosition)); // Viewport
+        
+        /*
         Vector3 look = transform.forward;
         Debug.DrawRay(transform.position + Vector3.up, look * 10, Color.red);
 
@@ -23,5 +30,6 @@ public class TestRaycast : MonoBehaviour
         {
             Debug.Log($"Raycast {hit.collider.gameObject.name}");
         }
+        */
     }
 }
