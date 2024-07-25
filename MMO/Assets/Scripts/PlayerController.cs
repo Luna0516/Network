@@ -37,6 +37,17 @@ public class PlayerController : MonoBehaviour
                 //transform.LookAt(_destPos);
             }
         }
+
+        if(_moveToDest)
+        {
+            Animator anim = GetComponent<Animator>();
+            anim.Play("RUN");
+        }
+        else
+        {
+            Animator anim = GetComponent<Animator>();
+            anim.Play("WAIT");
+        }
     }
 
     void OnKeyboard()
