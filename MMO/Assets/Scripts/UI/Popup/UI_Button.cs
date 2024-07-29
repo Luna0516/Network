@@ -42,7 +42,7 @@ public class UI_Button : UI_Popup
 
         // 이미지 드래그 자동화 설정 (수정)
         GameObject obj = GetImage((int)Images.ItemIcon).gameObject;
-        AddUIEvent(obj, (PointerEventData data) => { obj.transform.position = data.position; }, Define.UIEvent.Drag);
+        BindEvent(obj, (PointerEventData data) => { obj.transform.position = data.position; }, Define.UIEvent.Drag);
 
         //Extension 연습
         GetButton((int)Buttons.PointButton).gameObject.AddUIEvent(OnButtonClicked);
