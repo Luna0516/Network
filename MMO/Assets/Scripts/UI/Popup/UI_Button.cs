@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_Button : UI_Base
+public class UI_Button : UI_Popup
 {
     enum Buttons
     {
@@ -35,17 +35,17 @@ public class UI_Button : UI_Base
         Bind<GameObject>(typeof(GameObjects));
         Bind<Image>(typeof(Images));
 
-        Get<TextMeshProUGUI>((int)Texts.ScoreText).text = $"Bind Text";
-
-        // 이미지 드래그 자동화 설정
+        // 이미지 드래그 자동화 설정 (수정)
         GameObject obj = GetImage((int)Images.ItemIcon).gameObject;
-        UI_EventHandler evt = obj.GetComponent<UI_EventHandler>();
-        evt.OnDragHandler += ((PointerEventData data) => { obj.transform.position = data.position; });
+        AddUIEvent(obj, (PointerEventData data) => { obj.transform.position = data.position; }, Define.UIEvent.Drag);
+
+        //Extension 연습
+        GetButton((int)Buttons.PointButton).gameObject.AddUIEvent(OnButtonClicked);
     }
 
     int _score = 0;
 
-    public void OnButtonClicked()
+    public void OnButtonClicked(PointerEventData data)
     {
         _score++;
 
