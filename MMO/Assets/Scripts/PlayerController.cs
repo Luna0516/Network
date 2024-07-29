@@ -18,16 +18,11 @@ public class PlayerController : MonoBehaviour
         Managers.Input.MouseAction += OnMouseClicked;
     }
 
-    float wait_run_ratio = 0;
-
     public enum PlayerState
     {
         Die,
         Moveing,
         Idle,
-        //Channeling,
-        //Jumping,
-        //Falling,
     }
 
     PlayerState _state = PlayerState.Idle;
@@ -35,14 +30,8 @@ public class PlayerController : MonoBehaviour
     private void UpdateIdle()
     {
         // 애니메이션 처리
-        if (wait_run_ratio < 0.01f)
-            wait_run_ratio = 0.0f;
-        else
-            wait_run_ratio = Mathf.Lerp(wait_run_ratio, 0, 10.0f * Time.deltaTime);
-
         Animator anim = GetComponent<Animator>();
-        anim.SetFloat("wait_run_ratio", wait_run_ratio);
-        anim.Play("WAIT_RUN");
+        anim.SetFloat("speed", 0);
     }
 
     private void UpdateMoving()
@@ -62,14 +51,8 @@ public class PlayerController : MonoBehaviour
         }
 
         // 애니메이션 처리
-        if (wait_run_ratio > 0.99f)
-            wait_run_ratio = 1.0f;
-        else
-            wait_run_ratio = Mathf.Lerp(wait_run_ratio, 1, 10.0f * Time.deltaTime);
-
         Animator anim = GetComponent<Animator>();
-        anim.SetFloat("wait_run_ratio", wait_run_ratio);
-        anim.Play("WAIT_RUN");
+        anim.SetFloat("speed", _speed);
     }
 
     private void UpdateDie()
