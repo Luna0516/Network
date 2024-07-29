@@ -30,6 +30,11 @@ public class UI_Button : UI_Popup
 
     private void Start()
     {
+        Init();
+    }
+
+    public override void Init()
+    {
         Bind<Button>(typeof(Buttons));
         Bind<TextMeshProUGUI>(typeof(Texts));
         Bind<GameObject>(typeof(GameObjects));
@@ -41,6 +46,8 @@ public class UI_Button : UI_Popup
 
         //Extension 연습
         GetButton((int)Buttons.PointButton).gameObject.AddUIEvent(OnButtonClicked);
+
+        base.Init();
     }
 
     int _score = 0;
