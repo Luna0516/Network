@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Managers : MonoBehaviour
 {
-    static Managers instance;
+    static Managers s_instance;
     public static Managers Instance
     {
         get
         {
             Init();
-            return instance;
+            return s_instance;
         }
     }
 
@@ -22,9 +22,17 @@ public class Managers : MonoBehaviour
     ResourceManager _resource = new ResourceManager();
     public static ResourceManager Resource { get { return Instance._resource; } }
 
+    // Scene 매니저
+    SceneManagerEx _scene = new SceneManagerEx();
+    public static SceneManagerEx Scene { get { return Instance._scene; } }
+
+    // Sound 매니저
+    SoundManager _sound = new SoundManager();
+    public static SoundManager Sound { get {  return Instance._sound; } }
+
     // UI 매니저
     UIManager _ui = new UIManager();
-    public static UIManager UI { get{return Instance._ui;}}
+    public static UIManager UI { get { return Instance._ui; } }
 
     void Start()
     {
@@ -38,7 +46,7 @@ public class Managers : MonoBehaviour
 
     static void Init()
     {
-        if (instance == null)
+        if (s_instance == null)
         {
             GameObject obj = GameObject.Find("@Managers");
 
@@ -50,7 +58,17 @@ public class Managers : MonoBehaviour
 
             DontDestroyOnLoad(obj);
 
-            instance = obj.GetComponent<Managers>();
+            s_instance = obj.GetComponent<Managers>();
+
+            s_instance._sound.Init();
         }
+    }
+
+    public static void Clear()
+    {
+        Sound.Clear();
+        Input.Clear();
+        Scene.Clear();
+        UI.Clear();
     }
 }
