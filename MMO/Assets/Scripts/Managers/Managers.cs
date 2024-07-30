@@ -18,6 +18,10 @@ public class Managers : MonoBehaviour
     InputManager _input = new InputManager();
     public static InputManager Input { get { return Instance._input; } }
 
+    // Pool 매니저
+    PoolManager _pool = new PoolManager();
+    public static PoolManager Pool { get { return Instance._pool; } }
+
     // 구형
     ResourceManager _resource = new ResourceManager();
     public static ResourceManager Resource { get { return Instance._resource; } }
@@ -60,15 +64,18 @@ public class Managers : MonoBehaviour
 
             s_instance = obj.GetComponent<Managers>();
 
+            s_instance._pool.Init();
             s_instance._sound.Init();
         }
     }
 
     public static void Clear()
     {
-        Sound.Clear();
         Input.Clear();
+        Sound.Clear();
         Scene.Clear();
         UI.Clear();
+
+        Pool.Clear();
     }
 }
