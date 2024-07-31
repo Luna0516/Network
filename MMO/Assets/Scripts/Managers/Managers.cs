@@ -14,6 +14,10 @@ public class Managers : MonoBehaviour
         }
     }
 
+    // Data 매니저
+    DataManager _data = new DataManager();
+    public static DataManager Data { get { return Instance._data; } }
+
     // 구형
     InputManager _input = new InputManager();
     public static InputManager Input { get { return Instance._input; } }
@@ -64,6 +68,7 @@ public class Managers : MonoBehaviour
 
             s_instance = obj.GetComponent<Managers>();
 
+            s_instance._data.Init();
             s_instance._pool.Init();
             s_instance._sound.Init();
         }
