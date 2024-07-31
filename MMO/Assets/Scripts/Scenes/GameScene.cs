@@ -13,17 +13,6 @@ public class GameScene : BaseScene
         Managers.UI.ShowSceneUI<UI_Inven>();
     }
 
-    private void Start()
-    {
-        StartCoroutine(CheckData());
-    }
-
-    IEnumerator CheckData()
-    {
-        yield return new WaitForSeconds(2);
-        Dictionary<int, Stat> dict = Managers.Data.StatDict;
-    }
-
     public override void Clear()
     {
 
