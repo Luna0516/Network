@@ -10,14 +10,19 @@ public class GameScene : BaseScene
     }
 
     // Coroutine Test
+    // 1. 함수의 상태를 저장/복윈 가능!
+        // -> 엄청 오래 걸리는 작업을 잠시 끊거나
+        // -> 원하는 타이밍에 함수를 잠시 Stop/복원하는 경우
+    // 2. return -> 우리가 원하는 타입으로 가능(class도 가능)
     class CoroutineTest : IEnumerable
     {
         public IEnumerator GetEnumerator()
         {
-            yield return new Test() { Id = 1 };
-            yield return new Test() { Id = 2 };
-            yield return new Test() { Id = 3 };
-            yield return new Test() { Id = 4 };
+            for(int i = 0; i < 1000000; i++)
+            {
+                if(i % 10000 == 0)
+                    yield return null;
+            }
         }
     }
 
