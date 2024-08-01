@@ -5,15 +5,31 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    float _speed = 5.0f;
+    PlayerStat _stat;
 
     Vector3 _destPos;
 
+    Texture2D _attackIcon;
+    Texture2D _handIcon;
+
+    enum CursorType
+    {
+        None,
+        Attack,
+        Hand,
+    }
+
+    CursorType _cursorType = CursorType.None;
+
     void Start()
     {
+        _stat = gameObject.GetOrAddComponent<PlayerStat>();
+
         Managers.Input.MouseAction -= OnMouseClicked;
         Managers.Input.MouseAction += OnMouseClicked;
+
+        _attackIcon = Managers.Resource.Load<Texture2D>("Textures/Cursors/Attack");
+        _handIcon = Managers.Resource.Load<Texture2D>("Textures/Cursors/Hand");
     }
 
     public enum PlayerState
@@ -21,6 +37,7 @@ public class PlayerController : MonoBehaviour
         Die,
         Moveing,
         Idle,
+        Skill,  
     }
 
     PlayerState _state = PlayerState.Idle;
@@ -43,7 +60,7 @@ public class PlayerController : MonoBehaviour
         {
             NavMeshAgent agent = gameObject.GetOrAddComponent<NavMeshAgent>();
 
-            float moveDist = Mathf.Clamp(_speed * Time.deltaTime, 0, dir.magnitude);
+            float moveDist = Mathf.Clamp(_stat.MoveSpeed * Time.deltaTime, 0, dir.magnitude);
 
             agent.Move(dir.normalized * moveDist);
 
@@ -62,7 +79,7 @@ public class PlayerController : MonoBehaviour
 
         // 애니메이션 처리
         Animator anim = GetComponent<Animator>();
-        anim.SetFloat("speed", _speed);
+        anim.SetFloat("speed", _stat.MoveSpeed);
     }
 
     private void UpdateDie()
@@ -85,6 +102,35 @@ public class PlayerController : MonoBehaviour
                 break;
             default:
                 break;
+        }
+
+        UpdateMouseCursor();
+    }
+
+    void UpdateMouseCursor()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 100.0f, _mask))
+        {
+            if (hit.collider.gameObject.layer == (int)Define.Layer.Moster)
+            {
+                if (_cursorType != CursorType.Attack)
+                {
+                    Cursor.SetCursor(_attackIcon, new Vector2(_attackIcon.width / 5, 0), CursorMode.Auto);
+                    _cursorType = CursorType.Attack;
+                }
+            }
+            else
+            {
+                if (_cursorType != CursorType.Hand)
+                {
+                    Cursor.SetCursor(_handIcon, new Vector2(_handIcon.width / 3, 0), CursorMode.Auto);
+                    _cursorType = CursorType.Hand;
+                }
+            }
         }
     }
 
@@ -117,6 +163,8 @@ public class PlayerController : MonoBehaviour
     //    _moveToDest = false;
     //}
 
+    int _mask = (1 << (int)Define.Layer.Ground | 1 << (int)Define.Layer.Moster);
+
     private void OnMouseClicked(Define.MouseEvent evt)
     {
         if (_state == PlayerState.Die)
@@ -126,11 +174,19 @@ public class PlayerController : MonoBehaviour
 
         Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 100.0f, LayerMask.GetMask("Wall")))
+        if (Physics.Raycast(ray, out RaycastHit hit, 100.0f, _mask))
         {
-            // Debug.Log($"Raycast @ {hit.collider.gameObject.tag}");
             _destPos = hit.point;
             _state = PlayerState.Moveing;
+
+            if(hit.collider.gameObject.layer == (int)Define.Layer.Moster)
+            {
+                Debug.Log("Monster Click");
+            }
+            else
+            {
+                Debug.Log("Ground Click");
+            }
         }
     }
 }
