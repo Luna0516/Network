@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,6 +37,19 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateMoving()
     {
+        // 몬스터가 내 사정거리보다 가까우면 공격
+        if(_lockTarget != null)
+        {
+            float distance = (_destPos - transform.position).magnitude;
+            // 사정거리 일단 1
+            if(distance <= 1)
+            {
+                _state = PlayerState.Skill;
+                return;
+            }
+        }
+
+        // 이동
         Vector3 dir = _destPos - transform.position;
         if (dir.magnitude < 0.1f)
         {
@@ -57,10 +71,7 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
-            // transform.position += dir.normalized * moveDist;
-
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 20 * Time.deltaTime);
-            // transform.LookAt(_destPos);
         }
 
         // 애니메이션 처리
@@ -71,6 +82,11 @@ public class PlayerController : MonoBehaviour
     private void UpdateDie()
     {
 
+    }
+
+    private void UpdateSkill()
+    {
+        Debug.Log("UpdateSkill");
     }
 
     void Update()
@@ -85,6 +101,9 @@ public class PlayerController : MonoBehaviour
                 break;
             case PlayerState.Idle:
                 UpdateIdle();
+                break;
+            case PlayerState.Skill:
+                UpdateSkill();
                 break;
             default:
                 break;
@@ -157,9 +176,9 @@ public class PlayerController : MonoBehaviour
                 else if (raycastHit)
                     _destPos = hit.point;
                 break;
-            case Define.MouseEvent.PointerUp:
-                _lockTarget = null;
-                break;
+            //case Define.MouseEvent.PointerUp:
+            //    _lockTarget = null;
+            //    break;
             case Define.MouseEvent.Click:
                 break;
             default:
