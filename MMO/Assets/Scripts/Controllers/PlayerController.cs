@@ -4,55 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : BaseController
 {
-    public enum PlayerState
-    {
-        Die,
-        Moveing,
-        Idle,
-        Skill,  
-    }
-    PlayerStat _stat;
+    bool _stopSkill = false;
 
     int _mask = (1 << (int)Define.Layer.Ground | 1 << (int)Define.Layer.Moster);
 
-    Vector3 _destPos;
-
+    PlayerStat _stat;
     NavMeshAgent _agent;
 
-    GameObject _lockTarget;
-
-    [SerializeField]
-    PlayerState _state = PlayerState.Idle;
-    public PlayerState State
-    {
-        get { return _state; }
-        set
-        {
-            _state = value;
-
-            Animator anim = GetComponent<Animator>();
-            switch (_state)
-            {
-                case PlayerState.Die:
-                    break;
-                case PlayerState.Moveing:
-                    anim.CrossFade("RUN", 0.1f);
-                    break;
-                case PlayerState.Idle:
-                    anim.CrossFade("WAIT", 0.1f);
-                    break;
-                case PlayerState.Skill:
-                    anim.CrossFade("Attack", 0.1f, -1, 0);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    void Start()
+    public override void Init()
     {
         _stat = gameObject.GetOrAddComponent<PlayerStat>();
         _agent = gameObject.GetOrAddComponent<NavMeshAgent>();
@@ -60,20 +21,11 @@ public class PlayerController : MonoBehaviour
         Managers.Input.MouseAction -= OnMouseEvent;
         Managers.Input.MouseAction += OnMouseEvent;
 
-        Managers.UI.MakeWorldSpaceUI<UI_HPBar>(transform);
+        if (gameObject.GetComponentInChildren<UI_HPBar>() == null)
+            Managers.UI.MakeWorldSpaceUI<UI_HPBar>(transform);
     }
 
-    private void UpdateDie()
-    {
-
-    }
-
-    private void UpdateIdle()
-    {
-
-    }
-
-    private void UpdateMoving()
+    protected override void UpdateMoving() 
     {
         // 몬스터가 내 사정거리보다 가까우면 공격
         if(_lockTarget != null)
@@ -82,7 +34,7 @@ public class PlayerController : MonoBehaviour
             // 사정거리 일단 1
             if(distance <= 1.3f)
             {
-                State = PlayerState.Skill;
+                State = Define.State.Skill;
                 return;
             }
         }
@@ -91,7 +43,7 @@ public class PlayerController : MonoBehaviour
         Vector3 dir = _destPos - transform.position;
         if (dir.magnitude < 0.1f)
         {
-            State = PlayerState.Idle;
+            State = Define.State.Idle;
         }
         else
         {
@@ -103,7 +55,7 @@ public class PlayerController : MonoBehaviour
             if (Physics.Raycast(transform.position + Vector3.up * 0.5f, dir, 1.0f, LayerMask.GetMask("Block")))
             {
                 if (Input.GetMouseButton(0) == false)
-                    State = PlayerState.Idle;
+                    State = Define.State.Idle;
                 return;
             }
 
@@ -111,7 +63,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void UpdateSkill()
+    protected override void UpdateSkill()
     {
         if(_lockTarget != null)
         {
@@ -134,49 +86,26 @@ public class PlayerController : MonoBehaviour
 
         if(_stopSkill)
         {
-            State = PlayerState.Idle;
+            State = Define.State.Idle;
         }
         else
         {
-            State = PlayerState.Skill;
+            State = Define.State.Skill;
         }
     }
-
-    void Update()
-    {
-        switch (State)
-        {
-            case PlayerState.Die:
-                UpdateDie();
-                break;
-            case PlayerState.Moveing:
-                UpdateMoving();
-                break;
-            case PlayerState.Idle:
-                UpdateIdle();
-                break;
-            case PlayerState.Skill:
-                UpdateSkill();
-                break;
-            default:
-                break;
-        }
-    }
-
-    bool _stopSkill = false;
 
     private void OnMouseEvent(Define.MouseEvent evt)
     {
-        if (State == PlayerState.Die)
+        if (State == Define.State.Die)
             return;
 
         switch (State)
         {
-            case PlayerState.Moveing:
-            case PlayerState.Idle:
+            case Define.State.Moving:
+            case Define.State.Idle:
                 OnMouseEvent_IdleRun(evt);
                 break;
-            case PlayerState.Skill:
+            case Define.State.Skill:
                 {
                     if (evt == Define.MouseEvent.PointerUp)
                         _stopSkill = true;
@@ -199,7 +128,7 @@ public class PlayerController : MonoBehaviour
                 if (raycastHit)
                 {
                     _destPos = hit.point;
-                    State = PlayerState.Moveing;
+                    State = Define.State.Moving;
                     _stopSkill = false;
 
                     if (hit.collider.gameObject.layer == (int)Define.Layer.Moster)
