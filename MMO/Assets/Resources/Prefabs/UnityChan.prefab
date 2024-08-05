@@ -3539,11 +3539,10 @@ GameObject:
   - component: {fileID: 8719439726986650880}
   - component: {fileID: 2590274631217087486}
   - component: {fileID: 6085070896525812694}
-  - component: {fileID: 3724512888616729670}
   - component: {fileID: 3964927697452915459}
   m_Layer: 7
   m_Name: UnityChan
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3598,7 +3597,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a15b9589c7657d74f85ce05057ea98f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _state: 2
+  _destPos: {x: 0, y: 0, z: 0}
+  _lockTarget: {fileID: 0}
+  _state: 1
 --- !u!114 &8719439726986650880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3662,28 +3663,6 @@ CapsuleCollider:
   m_Height: 1.5
   m_Direction: 1
   m_Center: {x: 0, y: 0.75, z: 0}
---- !u!195 &3724512888616729670
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5092037292710228512}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.2
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 1.5
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!114 &3964927697452915459
 MonoBehaviour:
   m_ObjectHideFlags: 0

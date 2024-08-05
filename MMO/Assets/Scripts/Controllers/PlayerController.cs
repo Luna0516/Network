@@ -11,12 +11,10 @@ public class PlayerController : BaseController
     int _mask = (1 << (int)Define.Layer.Ground | 1 << (int)Define.Layer.Moster);
 
     PlayerStat _stat;
-    NavMeshAgent _agent;
 
     public override void Init()
     {
         _stat = gameObject.GetOrAddComponent<PlayerStat>();
-        _agent = gameObject.GetOrAddComponent<NavMeshAgent>();
 
         Managers.Input.MouseAction -= OnMouseEvent;
         Managers.Input.MouseAction += OnMouseEvent;
@@ -47,10 +45,6 @@ public class PlayerController : BaseController
         }
         else
         {
-            float moveDist = Mathf.Clamp(_stat.MoveSpeed * Time.deltaTime, 0, dir.magnitude);
-
-            _agent.Move(dir.normalized * moveDist);
-
             Debug.DrawRay(transform.position + Vector3.up * 0.5f, dir.normalized, Color.green);
             if (Physics.Raycast(transform.position + Vector3.up * 0.5f, dir, 1.0f, LayerMask.GetMask("Block")))
             {
@@ -59,6 +53,8 @@ public class PlayerController : BaseController
                 return;
             }
 
+            float moveDist = Mathf.Clamp(_stat.MoveSpeed * Time.deltaTime, 0, dir.magnitude);
+            transform.position += dir.normalized * moveDist;
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 20 * Time.deltaTime);
         }
     }
@@ -80,7 +76,6 @@ public class PlayerController : BaseController
             Stat targetStat = _lockTarget.GetComponent<Stat>();
             Stat myStat = gameObject.GetComponent<Stat>();
             int damage = Mathf.Max(myStat.Attack - targetStat.Defense, 0);
-            Debug.Log($"damage : {damage}");
             targetStat.HP -= damage;
         }
 
