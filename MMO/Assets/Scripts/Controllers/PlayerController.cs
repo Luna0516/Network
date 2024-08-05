@@ -10,9 +10,12 @@ public class PlayerController : MonoBehaviour
 
     Vector3 _destPos;
 
+    NavMeshAgent _agent;
+
     void Start()
     {
         _stat = gameObject.GetOrAddComponent<PlayerStat>();
+        _agent = gameObject.GetOrAddComponent<NavMeshAgent>();
 
         Managers.Input.MouseAction -= OnMouseEvent;
         Managers.Input.MouseAction += OnMouseEvent;
@@ -26,13 +29,40 @@ public class PlayerController : MonoBehaviour
         Skill,  
     }
 
+    [SerializeField]
     PlayerState _state = PlayerState.Idle;
+
+    public PlayerState State
+    {
+        get { return _state; }
+        set
+        {
+            _state = value;
+
+            Animator anim = GetComponent<Animator>();
+            switch (_state)
+            {
+                case PlayerState.Die:
+                    break;
+                case PlayerState.Moveing:
+                    anim.SetFloat("speed", _stat.MoveSpeed);
+                    anim.SetBool("attack", false);
+                    break;
+                case PlayerState.Idle:
+                    anim.SetFloat("speed", 0);
+                    anim.SetBool("attack", false);
+                    break;
+                case PlayerState.Skill:
+                    anim.SetBool("attack", true);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     private void UpdateIdle()
     {
-        // 애니메이션 처리
-        Animator anim = GetComponent<Animator>();
-        anim.SetFloat("speed", 0);
     }
 
     private void UpdateMoving()
@@ -44,7 +74,7 @@ public class PlayerController : MonoBehaviour
             // 사정거리 일단 1
             if(distance <= 1)
             {
-                _state = PlayerState.Skill;
+                State = PlayerState.Skill;
                 return;
             }
         }
@@ -53,30 +83,24 @@ public class PlayerController : MonoBehaviour
         Vector3 dir = _destPos - transform.position;
         if (dir.magnitude < 0.1f)
         {
-            _state = PlayerState.Idle;
+            State = PlayerState.Idle;
         }
         else
         {
-            NavMeshAgent agent = gameObject.GetOrAddComponent<NavMeshAgent>();
-
             float moveDist = Mathf.Clamp(_stat.MoveSpeed * Time.deltaTime, 0, dir.magnitude);
 
-            agent.Move(dir.normalized * moveDist);
+            _agent.Move(dir.normalized * moveDist);
 
             Debug.DrawRay(transform.position + Vector3.up * 0.5f, dir.normalized, Color.green);
             if (Physics.Raycast(transform.position + Vector3.up * 0.5f, dir, 1.0f, LayerMask.GetMask("Block")))
             {
                 if (Input.GetMouseButton(0) == false)
-                    _state = PlayerState.Idle;
+                    State = PlayerState.Idle;
                 return;
             }
 
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 20 * Time.deltaTime);
         }
-
-        // 애니메이션 처리
-        Animator anim = GetComponent<Animator>();
-        anim.SetFloat("speed", _stat.MoveSpeed);
     }
 
     private void UpdateDie()
@@ -86,12 +110,17 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateSkill()
     {
-        Debug.Log("UpdateSkill");
+        State = PlayerState.Skill;
+    }
+
+    void OnHitEvent()
+    {
+        State = PlayerState.Moveing;
     }
 
     void Update()
     {
-        switch (_state)
+        switch (State)
         {
             case PlayerState.Die:
                 UpdateDie();
@@ -144,7 +173,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnMouseEvent(Define.MouseEvent evt)
     {
-        if (_state == PlayerState.Die)
+        if (State == PlayerState.Die)
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -161,7 +190,7 @@ public class PlayerController : MonoBehaviour
                     if(raycastHit)
                     {
                         _destPos = hit.point;
-                        _state = PlayerState.Moveing;
+                        State = PlayerState.Moveing;
 
                         if (hit.collider.gameObject.layer == (int)Define.Layer.Moster)
                             _lockTarget = hit.collider.gameObject;
