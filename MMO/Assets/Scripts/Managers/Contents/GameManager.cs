@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class GameManager
 {
     GameObject _player;
     HashSet<GameObject> _monster = new HashSet<GameObject>();
+
+    public Action<int> OnSpawnEvent;
 
     public GameObject Player { get { return _player; } }
 
@@ -24,6 +27,8 @@ public class GameManager
                 break;
             case Define.WorldObject.Monster:
                 _monster.Add(go);
+                if (OnSpawnEvent != null)
+                    OnSpawnEvent.Invoke(1);
                 break;
             case Define.WorldObject.Unknown:
             default:
@@ -37,7 +42,7 @@ public class GameManager
     {
         BaseController bc = go.GetComponent<BaseController>();
 
-        if (bc != null)
+        if (bc == null)
             return Define.WorldObject.Unknown;
 
         return bc.WorldObjectTpye;
@@ -59,6 +64,9 @@ public class GameManager
                 if(_monster.Contains(go))
                 {
                     _monster.Remove(go);
+
+                    if (OnSpawnEvent != null)
+                        OnSpawnEvent.Invoke(-1);
                 }
                 break;
             case Define.WorldObject.Unknown:
