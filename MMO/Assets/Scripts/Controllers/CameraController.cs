@@ -13,23 +13,19 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     GameObject _player;
 
-    // Start is called before the first frame update
-    void Start()
+    public void SetPlayer(GameObject player)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        _player = player;
     }
 
     private void LateUpdate()
     {
         if (_mode == Define.CameraMode.QuarterView)
         {
-            if (Physics.Raycast(_player.transform.position, _delta, out RaycastHit hitInfo, _delta.magnitude, LayerMask.GetMask("Wall")))
+            if (_player.IsValid() == false)
+                return;
+
+            if (Physics.Raycast(_player.transform.position, _delta, out RaycastHit hitInfo, _delta.magnitude, 1 << (int)Define.Layer.Block))
             {
                 float dist = (hitInfo.point - _player.transform.position).magnitude * 0.8f;
                 transform.position = _player.transform.position + _delta.normalized * dist;

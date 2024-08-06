@@ -17,6 +17,8 @@ public class MonsterController : BaseController
 
     public override void Init()
     {
+        WorldObjectTpye = Define.WorldObject.Monster;
+
         _stat = gameObject.GetOrAddComponent<Stat>();
         _agent = gameObject.GetOrAddComponent<NavMeshAgent>();
 
@@ -27,7 +29,7 @@ public class MonsterController : BaseController
     protected override void UpdateIdle()
     {
         // 나중에 매니저를 이용한 플레이어
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        GameObject player = Managers.Game.Player;
         if (player == null)
             return;
 
@@ -86,9 +88,7 @@ public class MonsterController : BaseController
         if (_lockTarget != null)
         {
             Stat targetStat = _lockTarget.GetComponent<Stat>();
-            Stat myStat = gameObject.GetComponent<Stat>();
-            int damage = Mathf.Max(myStat.Attack - targetStat.Defense, 0);
-            targetStat.HP -= damage;
+            targetStat.OnAttacked(_stat);
 
             if(targetStat.HP > 0)
             {

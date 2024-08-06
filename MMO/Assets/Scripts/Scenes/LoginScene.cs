@@ -12,9 +12,8 @@ public class LoginScene : BaseScene
         SceneType = Define.Scene.Login;
 
         List<GameObject> list = new List<GameObject>();
-        // Test
-        for (int i = 0; i < 5; i++)
-            list.Add(Managers.Resource.Instantiate("UnityChan"));
+
+        list.Add(Managers.Resource.Instantiate("UnityChan"));
 
         foreach (GameObject go in list)
             Managers.Resource.Destroy(go);

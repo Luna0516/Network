@@ -14,6 +14,8 @@ public class PlayerController : BaseController
 
     public override void Init()
     {
+        WorldObjectTpye = Define.WorldObject.Player;
+
         _stat = gameObject.GetOrAddComponent<PlayerStat>();
 
         Managers.Input.MouseAction -= OnMouseEvent;
@@ -45,7 +47,6 @@ public class PlayerController : BaseController
         }
         else
         {
-            Debug.DrawRay(transform.position + Vector3.up * 0.5f, dir.normalized, Color.green);
             if (Physics.Raycast(transform.position + Vector3.up * 0.5f, dir, 1.0f, LayerMask.GetMask("Block")))
             {
                 if (Input.GetMouseButton(0) == false)
@@ -74,9 +75,7 @@ public class PlayerController : BaseController
         if (_lockTarget != null)
         {
             Stat targetStat = _lockTarget.GetComponent<Stat>();
-            Stat myStat = gameObject.GetComponent<Stat>();
-            int damage = Mathf.Max(myStat.Attack - targetStat.Defense, 0);
-            targetStat.HP -= damage;
+            targetStat.OnAttacked(_stat);
         }
 
         if(_stopSkill)

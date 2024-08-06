@@ -14,6 +14,12 @@ public class Managers : MonoBehaviour
         }
     }
 
+    #region Contents
+    GameManager _game = new GameManager();
+    public static GameManager Game { get { return Instance._game; } }
+    #endregion
+
+    #region Core
     // Data 매니저
     DataManager _data = new DataManager();
     public static DataManager Data { get { return Instance._data; } }
@@ -41,6 +47,7 @@ public class Managers : MonoBehaviour
     // UI 매니저
     UIManager _ui = new UIManager();
     public static UIManager UI { get { return Instance._ui; } }
+    #endregion
 
     void Start()
     {
