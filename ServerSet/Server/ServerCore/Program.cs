@@ -37,14 +37,6 @@ namespace ServerCore
 
             ThreadPool.QueueUserWorkItem(SubThread);
 
-            //Thread t = new Thread(MainThread);
-            //t.Name = "Test Thread";
-            //t.IsBackground = true;
-            //t.Start();
-            //Console.WriteLine("Waitomg for Thread!");
-            //t.Join();
-            //Console.WriteLine("Hello World!");
-
             while(true)
             {
 
