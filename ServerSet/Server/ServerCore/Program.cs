@@ -6,24 +6,25 @@ namespace ServerCore
 {
     internal class Program
     {
-        // 경합 조건 (Race Condition)
-        // 원자적으로 처리를 해야 한다
-        // Interlocked 로 처리해야 한다.
-
-        // 다른 방법
-        // static object lockObj = new object();
-        // lock (lockObj) { number++ or --;}
-
         static int forSize = 100000;
 
         static int number = 0;
-        
+
+        static object lockObj = new object();
+
+        // 데드락 (DeadLock)
+        // Monitor.Enter(lockObj); 잠그기
+        // Monitor.Exit(lockObj);  잠금 풀기
+        // 코드가 더러워 진다 - 가시성 으엑
+
         static void Thread_1()
         {
             for (int i = 0; i < forSize; i++)
             {
-                // All or Nothing
-                Interlocked.Increment(ref number);
+                lock (lockObj) 
+                { 
+                    number++; 
+                }
             }
         }
 
@@ -31,7 +32,10 @@ namespace ServerCore
         {
             for (int i = 0; i < forSize; i++)
             {
-                Interlocked.Decrement(ref number);
+                lock (lockObj)
+                {
+                    number--;
+                }
             }
         }
 
