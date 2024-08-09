@@ -4,27 +4,63 @@ using System.Threading.Tasks;
 
 namespace ServerCore
 {
+    // 데드락 테스트
+
+    class SessionManager
+    {
+        static object _lock = new object();
+
+        public static void TestSession()
+        {
+            lock (_lock)
+            {
+
+            }
+        }
+
+        public static void Test()
+        {
+            lock (_lock)
+            {
+                UserManager.TestUser();
+            }
+        }
+    }
+
+    class UserManager
+    {
+        static object _lock = new object();
+
+        public static void TestUser()
+        {
+            lock (_lock)
+            {
+
+            }
+        }
+
+        public static void Test()
+        {
+            lock (_lock)
+            {
+                SessionManager.TestSession();
+            }
+        }
+    }
+
     internal class Program
     {
-        static int forSize = 100000;
+        static int forSize = 10000;
 
         static int number = 0;
 
         static object lockObj = new object();
 
-        // 데드락 (DeadLock)
-        // Monitor.Enter(lockObj); 잠그기
-        // Monitor.Exit(lockObj);  잠금 풀기
-        // 코드가 더러워 진다 - 가시성 으엑
-
         static void Thread_1()
         {
             for (int i = 0; i < forSize; i++)
             {
-                lock (lockObj) 
-                { 
-                    number++; 
-                }
+                SessionManager.Test();
             }
         }
 
@@ -32,10 +68,7 @@ namespace ServerCore
         {
             for (int i = 0; i < forSize; i++)
             {
-                lock (lockObj)
-                {
-                    number--;
-                }
+                UserManager.Test();
             }
         }
 
