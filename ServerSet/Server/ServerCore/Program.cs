@@ -1,55 +1,50 @@
-
-using System.Threading.Channels;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ServerCore
 {
-    // 메모리 베리어
-    // A) 코드 재배치 억제
-    // B) 가시성
-    
-    // 1) Full Memory Barrier (ASM MFENCE, C# Thread.MemoryBarrier) : Store/Load 둘다 막는다.
-    // 2) Store Memory Barrier (ASM SFENCE) : Store만 막는다.
-    // 2) Load Memory Barrier (ASM LFENCE) : Load만 막는다.
-
     internal class Program
     {
-        static int _answer;
-        static bool _complete;
+        // 경합 조건 (Race Condition)
+        // 원자적으로 처리를 해야 한다
+        // Interlocked 로 처리해야 한다.
 
-        static void A()
+        // 다른 방법
+        // static object lockObj = new object();
+        // lock (lockObj) { number++ or --;}
+
+        static int forSize = 100000;
+
+        static int number = 0;
+        
+        static void Thread_1()
         {
-            _answer = 123;
-            Console.WriteLine("Barrier 1");
-            Thread.MemoryBarrier(); // Barrier 1
-            _complete = true;
-            Console.WriteLine("Barrier 2");
-            Thread.MemoryBarrier(); // Barrier 2
+            for (int i = 0; i < forSize; i++)
+            {
+                // All or Nothing
+                Interlocked.Increment(ref number);
+            }
         }
 
-        static void B()
+        static void Thread_2()
         {
-            Console.WriteLine("Barrier 3");
-            Thread.MemoryBarrier(); // Barrier 3
-            if(_complete)
+            for (int i = 0; i < forSize; i++)
             {
-                Console.WriteLine("Barrier 4");
-                Thread.MemoryBarrier(); // Barrier 4
-                Console.WriteLine(_answer);
+                Interlocked.Decrement(ref number);
             }
         }
 
         static void Main(string[] args)
         {
-            Task a = new Task(A);
-            Task b = new Task(B);
+            Task t1 = new Task(Thread_1);
+            Task t2 = new Task(Thread_2);
+            t1.Start();
+            t2.Start();
 
-            a.Start();
-            b.Start();
+            Task.WaitAll(t1, t2);
 
-            while(true)
-            {
-
-            }
+            Console.WriteLine(number);
         }
     }
 }
