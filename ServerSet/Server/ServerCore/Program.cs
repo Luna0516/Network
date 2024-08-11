@@ -4,36 +4,28 @@ using System.Threading.Tasks;
 
 namespace ServerCore
 {
-    class SpinLock
+    class Lock
     {
-        //volatile bool _locked = false;
+        // bool <- 커널
+        // true : 연상태 // false : 닫힌 상태
+        // 닫는 거도 자동으로 해준다
+        // 커널을 통해 하기 때문에 오래 걸리는 단점
+        // AutoResetEvent _available = new AutoResetEvent(true);
 
-        int _locked = 0;
+        // 락구현에서 잘못된 방법
+        ManualResetEvent _available = new ManualResetEvent(true);
 
         public void Acquire()
         {
-            //while (_locked)
-            //{
-            //    // 잠김 풀리기를 기다린다.
-            //}
+            _available.WaitOne(); // 입장 시도
+            // _available.Reset(); // bool을 false로 해준다
 
-            //_locked = true;
-            int expected = 0;
-            int desired = 1;
-            while (Interlocked.CompareExchange(ref _locked, desired, expected) != expected)
-            {
-                // 잠김 풀리기를 기다린다.
-            }
-
-            // 쉬는 포인트
-            // Thread.Sleep(1); // 무조건 휴식 => 무조건 1ms 정도 쉬고 싶어요 (실제로 몇초 쉴껀지 운영체제의 스케줄러가 정해준다, 최대한 요청한 거랑 비슷하게 해준다.)
-            // Thread.Sleep(0); // 조건부 양보 => 나보다 우선순위가 낮은 애들한테는 양보 불가 => 우선순위가 나보다 같거나 높은 쓰레드가 없으면 다시 본인한테
-            Thread.Yield();  // 관대한 양보 => 관대하게 양보할테니, 지금 실행이 가능한 쓰레드가 있으면 실행하세요 => 실행 가능한 애가 없으면 남은 시간 소진
+            _available.Reset(); // Manual은 자동으로 닫히지 않음
         }
 
         public void Release()
         {
-            _locked = 0;
+            _available.Set(); // true로 다시 돌려준다. flag -> true
         }
     }
 
@@ -42,7 +34,7 @@ namespace ServerCore
         static readonly int forSize = 10000;
 
         static int _num = 0;
-        static SpinLock _spinLock = new SpinLock();
+        static Lock _spinLock = new Lock();
 
         static void Thread_1()
         {
