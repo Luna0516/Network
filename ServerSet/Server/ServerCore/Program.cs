@@ -4,45 +4,22 @@ using System.Threading.Tasks;
 
 namespace ServerCore
 {
-    class Lock
-    {
-        // bool <- 커널
-        // true : 연상태 // false : 닫힌 상태
-        // 닫는 거도 자동으로 해준다
-        // 커널을 통해 하기 때문에 오래 걸리는 단점
-        // AutoResetEvent _available = new AutoResetEvent(true);
-
-        // 락구현에서 잘못된 방법
-        ManualResetEvent _available = new ManualResetEvent(true);
-
-        public void Acquire()
-        {
-            _available.WaitOne(); // 입장 시도
-            // _available.Reset(); // bool을 false로 해준다
-
-            _available.Reset(); // Manual은 자동으로 닫히지 않음
-        }
-
-        public void Release()
-        {
-            _available.Set(); // true로 다시 돌려준다. flag -> true
-        }
-    }
-
     class Program
     {
-        static readonly int forSize = 10000;
+        static readonly int forSize = 100000;
 
         static int _num = 0;
-        static Lock _spinLock = new Lock();
+
+        // 스핀락 보다 느리다 - 커널 동기화 객체라서
+        static Mutex _lock = new Mutex();
 
         static void Thread_1()
         {
             for(int i = 0; i < forSize; i++)
             {
-                _spinLock.Acquire();
+                _lock.WaitOne();
                 _num++;
-                _spinLock.Release();
+                _lock.ReleaseMutex();
             }
         }
 
@@ -50,9 +27,9 @@ namespace ServerCore
         {
             for (int i = 0; i < forSize; i++)
             {
-                _spinLock.Acquire();
+                _lock.WaitOne();
                 _num--;
-                _spinLock.Release();
+                _lock.ReleaseMutex();
             }
         }
 
