@@ -21,7 +21,6 @@ namespace ServerCore
                 Thread.Sleep(1000);
 
                 session.Disconnect();
-                session.Disconnect();
             }
             catch (Exception e)
             {

@@ -35,8 +35,16 @@ namespace DummyClient
                     // 받는다
                     byte[] recvBuff = new byte[1024];
                     int recvBytes = socket.Receive(recvBuff);
-                    string recvData = Encoding.UTF8.GetString(recvBuff, 0, recvBytes);
-                    Console.WriteLine($"[From Server] {recvData}");
+
+                    if (recvBytes > 0)
+                    {
+                        string recvData = Encoding.UTF8.GetString(recvBuff, 0, recvBytes);
+                        Console.WriteLine($"[From Server] {recvData}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to receive data from the server.");
+                    }
 
                     // 나간다
                     socket.Shutdown(SocketShutdown.Both);

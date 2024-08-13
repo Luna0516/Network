@@ -11,21 +11,22 @@ namespace ServerCore
 
         object _lock = new object();
         Queue<byte[]> _sendQueue = new Queue<byte[]>();
-        bool _pending = false;
         SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
+
+        SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
+
+        List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
         public void Start(Socket socket)
         {
             _socket = socket;
 
-            SocketAsyncEventArgs recvArgs = new SocketAsyncEventArgs();
-            recvArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
-            // recvArgs.UserToken = this;
-            recvArgs.SetBuffer(new byte[1024], 0, 1024);
+            _recvArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
+            _recvArgs.SetBuffer(new byte[1024], 0, 1024);
             
             _sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
 
-            RegisterRecv(recvArgs);
+            RegisterRecv();
         }
 
         public void Send(byte[] sendBuff)
@@ -34,7 +35,7 @@ namespace ServerCore
             {
                 _sendQueue.Enqueue(sendBuff);
 
-                if (_pending == false)
+                if (_pendingList.Count == 0)
                     ResisterSend();
             }
         }
@@ -51,12 +52,18 @@ namespace ServerCore
         #region 네트워크 통신
         void ResisterSend()
         {
-            _pending = true;
+            _pendingList.Clear();
 
-            byte[] buff = _sendQueue.Dequeue();
-            _sendArgs.SetBuffer(buff, 0, buff.Length);
+            while (_sendQueue.Count > 0)
+            {
+                byte[] buff = _sendQueue.Dequeue();
+                _pendingList.Add(new ArraySegment<byte>(buff, 0, buff.Length));
+            }
 
-            bool pending = _socket.ReceiveAsync(_sendArgs);
+            _sendArgs.BufferList = _pendingList;
+
+            // SendAsync를 통해 비동기적으로 데이터를 전송
+            bool pending = _socket.SendAsync(_sendArgs);
             if (pending == false)
                 OnSendCompleted(null, _sendArgs);
         }
@@ -69,10 +76,13 @@ namespace ServerCore
                 {
                     try
                     {
-                        if (_sendQueue.Count != 0)
+                        _sendArgs.BufferList = null;
+                        _pendingList.Clear();
+
+                        Console.WriteLine($"Transferred bytes : {_sendArgs.BytesTransferred}");
+
+                        if (_sendQueue.Count > 0)
                             ResisterSend();
-                        else
-                            _pending = false;
                     }
                     catch (Exception e)
                     {
@@ -81,17 +91,18 @@ namespace ServerCore
                 }
                 else
                 {
+                    Console.WriteLine($"Send failed with error: {args.SocketError}");
                     Disconnect();
                 }
             }
         }
 
-        void RegisterRecv(SocketAsyncEventArgs args) 
+        void RegisterRecv() 
         {
-            bool pending = _socket.ReceiveAsync(args);
+            bool pending = _socket.ReceiveAsync(_recvArgs);
 
             if (pending == false)
-                OnRecvCompleted(null, args);
+                OnRecvCompleted(null, _recvArgs);
         }
 
         void OnRecvCompleted(object sender, SocketAsyncEventArgs args)
@@ -104,7 +115,7 @@ namespace ServerCore
                     string recvData = Encoding.UTF8.GetString(args.Buffer, args.Offset, args.BytesTransferred);
                     Console.WriteLine($"[From Client] {recvData}");
 
-                    RegisterRecv(args);
+                    RegisterRecv();
                 }
                 catch (Exception e)
                 {
