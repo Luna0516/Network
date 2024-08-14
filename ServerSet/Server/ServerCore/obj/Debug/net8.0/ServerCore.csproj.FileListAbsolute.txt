@@ -1,6 +1,4 @@
-C:\GitHub\Network\ServerSet\Server\ServerCore\bin\Debug\net8.0\ServerCore.exe
 C:\GitHub\Network\ServerSet\Server\ServerCore\bin\Debug\net8.0\ServerCore.deps.json
-C:\GitHub\Network\ServerSet\Server\ServerCore\bin\Debug\net8.0\ServerCore.runtimeconfig.json
 C:\GitHub\Network\ServerSet\Server\ServerCore\bin\Debug\net8.0\ServerCore.dll
 C:\GitHub\Network\ServerSet\Server\ServerCore\bin\Debug\net8.0\ServerCore.pdb
 C:\GitHub\Network\ServerSet\Server\ServerCore\obj\Debug\net8.0\ServerCore.GeneratedMSBuildEditorConfig.editorconfig
@@ -11,5 +9,4 @@ C:\GitHub\Network\ServerSet\Server\ServerCore\obj\Debug\net8.0\ServerCore.source
 C:\GitHub\Network\ServerSet\Server\ServerCore\obj\Debug\net8.0\ServerCore.dll
 C:\GitHub\Network\ServerSet\Server\ServerCore\obj\Debug\net8.0\refint\ServerCore.dll
 C:\GitHub\Network\ServerSet\Server\ServerCore\obj\Debug\net8.0\ServerCore.pdb
-C:\GitHub\Network\ServerSet\Server\ServerCore\obj\Debug\net8.0\ServerCore.genruntimeconfig.cache
 C:\GitHub\Network\ServerSet\Server\ServerCore\obj\Debug\net8.0\ref\ServerCore.dll
