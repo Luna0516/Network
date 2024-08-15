@@ -11,11 +11,12 @@ namespace DummyClient
         {
             Console.WriteLine($"OnConnected : {endPoint}");
 
-            // 보낸다
             for (int i = 0; i < 5; i++)
             {
                 byte[] sendBuff = Encoding.UTF8.GetBytes($"Hello World! {i}");
                 Send(sendBuff);
+
+                Thread.Sleep(1);
             }
         }
 
