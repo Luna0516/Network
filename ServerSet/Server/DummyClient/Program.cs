@@ -15,8 +15,6 @@ namespace DummyClient
             {
                 byte[] sendBuff = Encoding.UTF8.GetBytes($"Hello World! {i}");
                 Send(sendBuff);
-
-                Thread.Sleep(1);
             }
         }
 
