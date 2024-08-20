@@ -1,67 +1,50 @@
 using System.Net;
-using System.Text;
 using ServerCore;
 
 namespace Server
 {
-    public class Knight
+    // 최대한 압축하자!
+    public class Packet
     {
-        public int Hp { get; set; }
-        public int Attack { get; set; }
+        public ushort Size { get; set; }
+        public ushort PacketId { get; set; }
 
-        public Knight(int hp, int attack) 
-        {
-            Hp = hp;
-            Attack = attack;
-        }
-
-        // Serialize the Knight object to a byte array
+        // 패킷을 바이트 배열로 직렬화
         public byte[] Serialize()
         {
-            byte[] hpBytes = BitConverter.GetBytes(Hp);
-            byte[] attackBytes = BitConverter.GetBytes(Attack);
+            byte[] sizeBytes = BitConverter.GetBytes(Size);
+            byte[] packetIdBytes = BitConverter.GetBytes(PacketId);
 
-            byte[] result = new byte[hpBytes.Length + attackBytes.Length];
-            Array.Copy(hpBytes, 0, result, 0, hpBytes.Length);
-            Array.Copy(attackBytes, 0, result, hpBytes.Length, attackBytes.Length);
+            // 직렬화된 바이트 배열을 생성
+            byte[] result = new byte[sizeBytes.Length + packetIdBytes.Length];
+            Array.Copy(sizeBytes, 0, result, 0, sizeBytes.Length);
+            Array.Copy(packetIdBytes, 0, result, sizeBytes.Length, packetIdBytes.Length);
 
             return result;
         }
 
-        // Deserialize a byte array to create a Knight object
-        public static Knight Deserialize(byte[] data)
+        // 바이트 배열로부터 패킷을 역직렬화
+        public static Packet Deserialize(byte[] data)
         {
-            if (data.Length < 8) // Must have at least 8 bytes (2 int values)
+            if (data.Length < 4) // 최소한 4바이트 (2바이트 크기 + 2바이트 패킷 ID)
             {
                 throw new ArgumentException("Data is too short to deserialize");
             }
 
-            int hp = BitConverter.ToInt32(data, 0);
-            int attack = BitConverter.ToInt32(data, 4);
+            ushort size = BitConverter.ToUInt16(data, 0);
+            ushort packetId = BitConverter.ToUInt16(data, 2);
 
-            return new Knight(hp, attack);
+            return new Packet { Size = size, PacketId = packetId };
         }
     }
 
-    class GameSession : Session
+    class GameSession : PacketSession
     {
         public override void OnConnected(EndPoint endPoint)
         {
             Console.WriteLine($"OnConnected : {endPoint}");
-
-            Knight knight = new Knight(10, 100);
-            byte[] serializedData = knight.Serialize();
-            ArraySegment<byte> sendBuff = new ArraySegment<byte>(serializedData);
-
-            //ArraySegment<byte> openSegment = SendBufferHelper.Open(4096);
-            //byte[] buffer = BitConverter.GetBytes(knight._hp);
-            //byte[] buffer2 = BitConverter.GetBytes(knight._attak);
-            //Array.Copy(buffer, 0, openSegment.Array, 0, buffer.Length);
-            //Array.Copy(buffer2, 0, openSegment.Array, openSegment.Offset + buffer.Length, buffer2.Length);
-            //ArraySegment<byte> sendBuff = SendBufferHelper.Close(buffer.Length + buffer2.Length);
             
-            Send(sendBuff);
-            Thread.Sleep(1000);
+            Thread.Sleep(5000);
             Disconnect();
         }
 
@@ -70,13 +53,11 @@ namespace Server
             Console.WriteLine($"OnDisconnected : {endPoint}");
         }
 
-        public override int OnReceive(ArraySegment<byte> buffer)
+        public override void OnReceivePacket(ArraySegment<byte> buffer)
         {
-            int processedLength = buffer.Count; // 또는 실제로 처리한 데이터의 길이
-            string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, processedLength);
-            Console.WriteLine($"[From Client] {recvData}");
-
-            return processedLength;
+            ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+            ushort Id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + 2);
+            Console.WriteLine($"ReceivePacketId : {Id}, Size : {size}");
         }
 
         public override void OnSend(int numOfBytes)
@@ -91,6 +72,7 @@ namespace Server
 
         static void Main(string[] args)
         {
+            Console.WriteLine("<<<<<<<<<<<Server>>>>>>>>>>");
             // DNS (Domain Name System)
             string host = Dns.GetHostName();
             IPHostEntry ipHost = Dns.GetHostEntry(host);
@@ -108,7 +90,7 @@ namespace Server
                 }
             }
 
-            Console.WriteLine("Server shutting down...");
+            Console.WriteLine("\nServer shutting down...");
         }
     }
 }
