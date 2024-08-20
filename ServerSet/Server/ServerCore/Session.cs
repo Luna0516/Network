@@ -43,7 +43,7 @@ namespace ServerCore
                 _sendQueue.Enqueue(sendBuff);
 
                 if (_pendingList.Count == 0)
-                    ResisterSend();
+                    RegisterSend();
             }
         }
 
@@ -59,7 +59,7 @@ namespace ServerCore
         }
 
         #region 네트워크 통신
-        void ResisterSend()
+        void RegisterSend()
         {
             _pendingList.Clear();
 
@@ -91,7 +91,7 @@ namespace ServerCore
                         OnSend(_sendArgs.BytesTransferred);
 
                         if (_sendQueue.Count > 0)
-                            ResisterSend();
+                            RegisterSend();
                     }
                     catch (Exception e)
                     {
@@ -152,7 +152,7 @@ namespace ServerCore
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"OnRecvCompleted Failed {e}");
+                    Console.WriteLine($"OnReceiveCompleted Failed {e}");
                 }
             }
             else

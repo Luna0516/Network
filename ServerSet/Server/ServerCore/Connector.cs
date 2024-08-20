@@ -9,6 +9,9 @@ namespace ServerCore
 
         public void Connect(IPEndPoint endPoint, Func<Session> sessionFactory)
         {
+            if (sessionFactory == null)
+                throw new ArgumentNullException(nameof(sessionFactory));
+
             Socket socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             _sessionFactory = sessionFactory;
 

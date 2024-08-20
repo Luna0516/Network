@@ -1,6 +1,5 @@
 using ServerCore;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 
 namespace DummyClient
@@ -25,7 +24,8 @@ namespace DummyClient
 
         public override int OnReceive(ArraySegment<byte> buffer)
         {
-            string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
+            int processedLength = buffer.Count;
+            string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, processedLength);
             Console.WriteLine($"[From Server] {recvData}");
 
             return buffer.Count;
@@ -52,17 +52,15 @@ namespace DummyClient
 
             while (true)
             {
-                try
+                if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Q)
                 {
 
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                }
 
-                Thread.Sleep(100);
+                    break;
+                }
             }
+
+            Console.WriteLine("Client shutting down...");
         }
     }
 }
