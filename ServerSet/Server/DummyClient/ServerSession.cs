@@ -4,23 +4,69 @@ using System.Text;
 
 namespace DummyClient
 {
-    public class Packet
+    public abstract class Packet
     {
         public ushort Size { get; set; }
 
         public ushort PacketId { get; set; }
+
+        public abstract ArraySegment<byte> Write();
+        public abstract void Read(ArraySegment<byte> s);
     }
 
     public class PlayerInfoReq : Packet
     {
         public long PlayerId { get; set; }
+
+        public PlayerInfoReq()
+        {
+            PacketId = (ushort)PacketID.PlayerInforReq;
+        }
+
+        public override void Read(ArraySegment<byte> s)
+        {
+            ushort count = 0;
+
+            // ushort size = BitConverter.ToUInt16(s.Array, s.Offset);
+            count += 2;
+
+            // ushort id = BitConverter.ToUInt16(s.Array, s.Offset + count);
+            count += 2;
+
+            PlayerId = BitConverter.ToInt64(new Span<byte>(s.Array, s.Offset + count, s.Count - count));
+            count += 8;
+        }
+
+        public override ArraySegment<byte> Write()
+        {
+            ArraySegment<byte> s = SendBufferHelper.Open(4096);
+
+            ushort count = 0;
+            bool success = true;
+
+            // success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset, s.Count), packet.Size);
+
+            count += 2;
+            success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset + count, s.Count - count), PacketId);
+            
+            count += 2;
+            success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset + count, s.Count - count), PlayerId);
+            
+            count += 8;
+            success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset, s.Count), count);
+
+            if (success == false)
+                return null;
+
+            return SendBufferHelper.Close(count);
+        }
     }
 
-    public class PlayerInfoOk : Packet
-    {
-        public int Hp { get; set; }
-        public int Attack { get; set; }
-    }
+    //public class PlayerInfoOk : Packet
+    //{
+    //    public int Hp { get; set; }
+    //    public int Attack { get; set; }
+    //}
 
     public enum PacketID
     {
@@ -40,50 +86,12 @@ namespace DummyClient
         {
             Console.WriteLine($"OnConnected : {endPoint}");
 
-            PlayerInfoReq packet = new PlayerInfoReq
-            {
-                Size = 4,
-                PacketId = (ushort)PacketID.PlayerInforReq,
-                PlayerId = 1001
-            };
+            PlayerInfoReq packet = new PlayerInfoReq { PlayerId = 1001 };
 
-            ArraySegment<byte> s = SendBufferHelper.Open(4096);
-
-            ushort count = 0;
-            bool success = true;
-
-            // success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset, s.Count), packet.Size);
-            count += 2;
-
-            success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset + count, s.Count - count), packet.PacketId);
-            count += 2;
-
-            success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset + count, s.Count - count), packet.PlayerId);
-            count += 8;
-
-            success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset, s.Count), count);
-
-            ArraySegment<byte> c = SendBufferHelper.Close(count);
-
-            if (success)
-                Send(c);
-
-            //byte[] size = BitConverter.GetBytes(packet.Size);
-            //byte[] packetId = BitConverter.GetBytes(packet.PacketId);
-            //byte[] playerId = BitConverter.GetBytes(packet.PlayerId);
-
-
-            //Array.Copy(size, 0, s.Array, s.Offset + count, 2);
-            //count += 2;
-
-            //Array.Copy(packetId, 0, s.Array, s.Offset + count, 2);
-            //count += 2;
-
-            //Array.Copy(playerId, 0, s.Array, s.Offset + count, 8);
-            //count += 8;
-
-            //ArraySegment<byte> c = SendBufferHelper.Close(count);
-            //Send(c);
+            ArraySegment<byte> s = packet.Write();
+            
+            if (s != null)
+                Send(s);
         }
 
         public override void OnDisconnected(EndPoint endPoint)
