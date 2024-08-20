@@ -1,3 +1,4 @@
+using Server;
 using ServerCore;
 using System.Net;
 using System.Text;
@@ -24,9 +25,26 @@ namespace DummyClient
 
         public override int OnReceive(ArraySegment<byte> buffer)
         {
+            try
+            {
+                // 역직렬화
+                Knight knight = Knight.Deserialize(buffer.Array.Skip(buffer.Offset).Take(buffer.Count).ToArray());
+
+                Console.WriteLine($"[From Server] Knight HP: {knight.Hp}, Attack: {knight.Attack}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error during deserialization: {e.Message}");
+            }
+
             int processedLength = buffer.Count;
             string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, processedLength);
             Console.WriteLine($"[From Server] {recvData}");
+
+            //int hp = BitConverter.ToInt32(buffer.Array, buffer.Offset);
+            //int attack = BitConverter.ToInt32(buffer.Array, buffer.Offset + sizeof(int));
+
+            //Console.WriteLine($"[From Server] Knight HP: {hp}, Attack: {attack}");
 
             return buffer.Count;
         }

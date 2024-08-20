@@ -4,15 +4,42 @@ using ServerCore;
 
 namespace Server
 {
-    class Knight
+    public class Knight
     {
-        public int _hp;
-        public int _attak;
+        public int Hp { get; set; }
+        public int Attack { get; set; }
 
         public Knight(int hp, int attack) 
         {
-            _hp = hp;
-            _attak = attack;
+            Hp = hp;
+            Attack = attack;
+        }
+
+        // Serialize the Knight object to a byte array
+        public byte[] Serialize()
+        {
+            byte[] hpBytes = BitConverter.GetBytes(Hp);
+            byte[] attackBytes = BitConverter.GetBytes(Attack);
+
+            byte[] result = new byte[hpBytes.Length + attackBytes.Length];
+            Array.Copy(hpBytes, 0, result, 0, hpBytes.Length);
+            Array.Copy(attackBytes, 0, result, hpBytes.Length, attackBytes.Length);
+
+            return result;
+        }
+
+        // Deserialize a byte array to create a Knight object
+        public static Knight Deserialize(byte[] data)
+        {
+            if (data.Length < 8) // Must have at least 8 bytes (2 int values)
+            {
+                throw new ArgumentException("Data is too short to deserialize");
+            }
+
+            int hp = BitConverter.ToInt32(data, 0);
+            int attack = BitConverter.ToInt32(data, 4);
+
+            return new Knight(hp, attack);
         }
     }
 
@@ -23,8 +50,15 @@ namespace Server
             Console.WriteLine($"OnConnected : {endPoint}");
 
             Knight knight = new Knight(10, 100);
+            byte[] serializedData = knight.Serialize();
+            ArraySegment<byte> sendBuff = new ArraySegment<byte>(serializedData);
 
-            byte[] sendBuff = Encoding.UTF8.GetBytes("Welcome to MMORPG Server !");
+            //ArraySegment<byte> openSegment = SendBufferHelper.Open(4096);
+            //byte[] buffer = BitConverter.GetBytes(knight._hp);
+            //byte[] buffer2 = BitConverter.GetBytes(knight._attak);
+            //Array.Copy(buffer, 0, openSegment.Array, 0, buffer.Length);
+            //Array.Copy(buffer2, 0, openSegment.Array, openSegment.Offset + buffer.Length, buffer2.Length);
+            //ArraySegment<byte> sendBuff = SendBufferHelper.Close(buffer.Length + buffer2.Length);
             
             Send(sendBuff);
             Thread.Sleep(1000);

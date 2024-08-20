@@ -17,3 +17,8 @@ C:\GitHub\Network\ServerSet\Server\DummyClient\bin\Debug\net8.0\ServerCore.dll
 C:\GitHub\Network\ServerSet\Server\DummyClient\bin\Debug\net8.0\ServerCore.pdb
 C:\GitHub\Network\ServerSet\Server\DummyClient\obj\Debug\net8.0\DummyClient.csproj.AssemblyReference.cache
 C:\GitHub\Network\ServerSet\Server\DummyClient\obj\Debug\net8.0\DummyCli.C46919B7.Up2Date
+C:\GitHub\Network\ServerSet\Server\DummyClient\bin\Debug\net8.0\Server.deps.json
+C:\GitHub\Network\ServerSet\Server\DummyClient\bin\Debug\net8.0\Server.runtimeconfig.json
+C:\GitHub\Network\ServerSet\Server\DummyClient\bin\Debug\net8.0\Server.exe
+C:\GitHub\Network\ServerSet\Server\DummyClient\bin\Debug\net8.0\Server.dll
+C:\GitHub\Network\ServerSet\Server\DummyClient\bin\Debug\net8.0\Server.pdb
