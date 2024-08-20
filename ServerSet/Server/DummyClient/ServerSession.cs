@@ -11,6 +11,17 @@ namespace DummyClient
         public ushort PacketId { get; set; }
     }
 
+    public class PlayerInfoReq : Packet
+    {
+        public long PlayerId { get; set; }
+    }
+
+    public class PlayerInfoOk : Packet
+    {
+        public int Hp { get; set; }
+        public int Attack { get; set; }
+    }
+
     public enum PacketID
     {
         PlayerInforReq = 1,
@@ -19,28 +30,60 @@ namespace DummyClient
 
     class ServerSession : Session
     {
+        //static unsafe void ToBytes(byte[] array, int offset, ulong value)
+        //{
+        //    fixed (byte* ptr = &array[offset])
+        //        *(ulong*)ptr = value;
+        //}
+
         public override void OnConnected(EndPoint endPoint)
         {
-            Console.WriteLine($"OnConnected : {endPoint} {(ushort)4}");
+            Console.WriteLine($"OnConnected : {endPoint}");
 
-            Packet packet = new Packet
+            PlayerInfoReq packet = new PlayerInfoReq
             {
                 Size = 4,
-                PacketId = (ushort)PacketID.PlayerInforReq
+                PacketId = (ushort)PacketID.PlayerInforReq,
+                PlayerId = 1001
             };
 
-            for (int i = 0; i < 3; i++)
-            {
-                ArraySegment<byte> s = SendBufferHelper.Open(4096);
-                byte[] size = BitConverter.GetBytes(packet.Size);
-                byte[] packetId = BitConverter.GetBytes(packet.PacketId);
+            ArraySegment<byte> s = SendBufferHelper.Open(4096);
 
-                Array.Copy(size, 0, s.Array, s.Offset, size.Length);
-                Array.Copy(packetId, 0, s.Array, s.Offset + size.Length, packetId.Length);
+            ushort count = 0;
+            bool success = true;
 
-                ArraySegment<byte> c = SendBufferHelper.Close(packet.Size);
+            // success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset, s.Count), packet.Size);
+            count += 2;
+
+            success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset + count, s.Count - count), packet.PacketId);
+            count += 2;
+
+            success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset + count, s.Count - count), packet.PlayerId);
+            count += 8;
+
+            success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset, s.Count), count);
+
+            ArraySegment<byte> c = SendBufferHelper.Close(count);
+
+            if (success)
                 Send(c);
-            }
+
+            //byte[] size = BitConverter.GetBytes(packet.Size);
+            //byte[] packetId = BitConverter.GetBytes(packet.PacketId);
+            //byte[] playerId = BitConverter.GetBytes(packet.PlayerId);
+
+
+            //Array.Copy(size, 0, s.Array, s.Offset + count, 2);
+            //count += 2;
+
+            //Array.Copy(packetId, 0, s.Array, s.Offset + count, 2);
+            //count += 2;
+
+            //Array.Copy(playerId, 0, s.Array, s.Offset + count, 8);
+            //count += 8;
+
+            //ArraySegment<byte> c = SendBufferHelper.Close(count);
+            //Send(c);
         }
 
         public override void OnDisconnected(EndPoint endPoint)

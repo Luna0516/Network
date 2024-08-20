@@ -10,6 +10,17 @@ namespace Server
         public ushort PacketId { get; set; }
     }
 
+    public class PlayerInfoReq : Packet
+    {
+        public long PlayerId { get; set; }
+    }
+
+    public class PlayerInfoOk : Packet
+    {
+        public int Hp { get; set; }
+        public int Attack { get; set; }
+    }
+
     public enum PacketID
     {
         PlayerInforReq = 1,
@@ -22,7 +33,7 @@ namespace Server
         {
             Console.WriteLine($"OnConnected : {endPoint}");
 
-            Thread.Sleep(5000);
+            Thread.Sleep(1000);
             Disconnect();
         }
 
@@ -33,9 +44,28 @@ namespace Server
 
         public override void OnReceivePacket(ArraySegment<byte> buffer)
         {
+            ushort count = 0;
+
             ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
-            ushort Id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + 2);
-            Console.WriteLine($"ReceivePacketId : {Id}, Size : {size}");
+            count += 2;
+
+            ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
+            count += 2;
+
+            switch ((PacketID)id)
+            {
+                case PacketID.PlayerInforReq:
+                    long playerId = BitConverter.ToInt64(buffer.Array, buffer.Offset + count);
+                    count += 8;
+                    Console.WriteLine($"PlayerInforReq : {playerId}");
+                    break;
+                case PacketID.PlayerInfoOk:
+                    break;
+                default:
+                    break;
+            }
+
+            Console.WriteLine($"Receive PacketId : {id}, Size : {size}");
         }
 
         public override void OnSend(int numOfBytes)
