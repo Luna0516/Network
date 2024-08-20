@@ -1,0 +1,15 @@
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\bin\Debug\net8.0\PacketGenerator.exe
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\bin\Debug\net8.0\PacketGenerator.deps.json
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\bin\Debug\net8.0\PacketGenerator.runtimeconfig.json
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\bin\Debug\net8.0\PacketGenerator.dll
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\bin\Debug\net8.0\PacketGenerator.pdb
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGenerator.GeneratedMSBuildEditorConfig.editorconfig
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGenerator.AssemblyInfoInputs.cache
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGenerator.AssemblyInfo.cs
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGenerator.csproj.CoreCompileInputs.cache
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGenerator.sourcelink.json
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGenerator.dll
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\refint\PacketGenerator.dll
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGenerator.pdb
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGenerator.genruntimeconfig.cache
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\ref\PacketGenerator.dll

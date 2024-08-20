@@ -11,12 +11,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("Server")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("PacketGenerator")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9136f61f2d2b39fd891209ac55d2b8df74a5d232")]
-[assembly: System.Reflection.AssemblyProductAttribute("Server")]
-[assembly: System.Reflection.AssemblyTitleAttribute("Server")]
+[assembly: System.Reflection.AssemblyProductAttribute("PacketGenerator")]
+[assembly: System.Reflection.AssemblyTitleAttribute("PacketGenerator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 
 // MSBuild WriteCodeFragment 클래스에서 생성되었습니다.

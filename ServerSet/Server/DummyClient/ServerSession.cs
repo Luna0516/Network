@@ -4,17 +4,7 @@ using System.Text;
 
 namespace DummyClient
 {
-    public abstract class Packet
-    {
-        public ushort Size { get; set; }
-
-        public ushort PacketId { get; set; }
-
-        public abstract ArraySegment<byte> Write();
-        public abstract void Read(ArraySegment<byte> s);
-    }
-
-    public class PlayerInfoReq : Packet
+    public class PlayerInfoReq
     {
         public long PlayerId { get; set; }
         public string Name { get; set; }
@@ -56,12 +46,7 @@ namespace DummyClient
 
         public List<SkillInfo> skills = new List<SkillInfo>();
 
-        public PlayerInfoReq()
-        {
-            PacketId = (ushort)PacketID.PlayerInforReq;
-        }
-
-        public override void Read(ArraySegment<byte> segment)
+        public void Read(ArraySegment<byte> segment)
         {
             ushort count = 0;
 
@@ -92,7 +77,7 @@ namespace DummyClient
             }
         }
 
-        public override ArraySegment<byte> Write()
+        public ArraySegment<byte> Write()
         {
             ArraySegment<byte> segment = SendBufferHelper.Open(4096);
 
@@ -104,7 +89,7 @@ namespace DummyClient
             // success &= BitConverter.TryWriteBytes(new Span<byte>(s.Array, s.Offset, s.Count), packet.Size);
             count += sizeof(ushort);
 
-            success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), PacketId);
+            success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.PlayerInforReq);
             count += sizeof(ushort);
             
             success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), PlayerId);
