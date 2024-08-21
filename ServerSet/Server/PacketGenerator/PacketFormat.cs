@@ -2,12 +2,31 @@ namespace PacketGenerator
 {
     class PacketFormat
     {
+        // {0} 패킷 이름/번호 목록
+        // {1} 패킷 목록
+        public static string fileFormat =
+@"using ServerCore;
+using System.Net;
+using System.Text;
+
+public enum PacketID
+{{
+    {0}
+}}
+{1}";
+
+        // {0} 패킷 이름
+        // {1} 패킷 번호
+        public static string packetEnumFormat =
+@"{0} = {1},";
+
         // {0} 패킷 이름
         // {1} 멤버 이름
         // {2} 멤버 변수 Read
         // {3} 멤버 변수 Write
         public static string packetFormat =
-@"public class {0}
+@"
+public class {0}
 {{
     {1}
     public void Read(ArraySegment<byte> segment)
@@ -38,7 +57,8 @@ namespace PacketGenerator
             return null;
         return SendBufferHelper.Close(count);
     }}
-}}";
+}}
+";
 
         // {0} 변수 형식
         // {1} 변수 이름

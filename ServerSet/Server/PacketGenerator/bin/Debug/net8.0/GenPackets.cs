@@ -1,3 +1,14 @@
+using ServerCore;
+using System.Net;
+using System.Text;
+
+public enum PacketID
+{
+    PlayerInfoReq = 1,
+	Test = 2,
+	
+}
+
 public class PlayerInfoReq
 {
     public long playerId;
@@ -80,6 +91,41 @@ public class PlayerInfoReq
 		count += sizeof(ushort);
 		foreach(Skill skill in skills)
 		    skill.Write(s, ref count);
+        success &= BitConverter.TryWriteBytes(s, count);
+        if (success == false)
+            return null;
+        return SendBufferHelper.Close(count);
+    }
+}
+
+public class Test
+{
+    public int testInt;
+    public void Read(ArraySegment<byte> segment)
+    {
+        ushort count = 0;
+
+        ReadOnlySpan<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+        count += sizeof(ushort);
+        count += sizeof(ushort);
+
+        this.testInt = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+		count += sizeof(int);
+    }
+
+    public ArraySegment<byte> Write()
+    {
+        ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+        ushort count = 0;
+        bool success = true;
+
+        Span<byte> s = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
+        count += sizeof(ushort);
+        success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.Test);
+        count += sizeof(ushort);
+        success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), testInt);
+		count += sizeof(int);
         success &= BitConverter.TryWriteBytes(s, count);
         if (success == false)
             return null;
