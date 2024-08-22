@@ -13,3 +13,7 @@ C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\refint\Packe
 C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGenerator.pdb
 C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGenerator.genruntimeconfig.cache
 C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\ref\PacketGenerator.dll
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\bin\Debug\net8.0\ServerCore.dll
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\bin\Debug\net8.0\ServerCore.pdb
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGenerator.csproj.AssemblyReference.cache
+C:\GitHub\Network\ServerSet\Server\PacketGenerator\obj\Debug\net8.0\PacketGe.F1D84891.Up2Date

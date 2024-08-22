@@ -11,14 +11,34 @@ public enum PacketID
 
 public class PlayerInfoReq
 {
-    public long playerId;
+    public byte testByte;
+	public long playerId;
 	public string name;
-	
 	public struct Skill
 	{
 	    public int id;
 		public short level;
 		public float duration;
+		public struct Attribute
+		{
+		    public int att;
+		
+		    public void Read(ReadOnlySpan<byte> s, ref ushort count)
+		    {
+		        this.att = BitConverter.ToInt32(s.Slice(count, s.Length - count));
+				count += sizeof(int);
+		    }
+		
+		    public bool Write(Span<byte> s, ref ushort count)
+		    {
+		        bool success = true;
+		        success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), att);
+				count += sizeof(int);
+		        return success;
+		    }
+		}
+		public List<Attribute> attributes = new List<Attribute>();
+		
 	
 	    public void Read(ReadOnlySpan<byte> s, ref ushort count)
 	    {
@@ -28,6 +48,15 @@ public class PlayerInfoReq
 			count += sizeof(short);
 			this.duration = BitConverter.ToSingle(s.Slice(count, s.Length - count));
 			count += sizeof(float);
+			this.attributes.Clear();
+			ushort attributeLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
+			count += sizeof(ushort);
+			for(int i = 0; i < attributeLen; i++)
+			{
+			    Attribute attribute = new Attribute();
+			    attribute.Read(s, ref count);
+			    attributes.Add(attribute);
+			}
 	    }
 	
 	    public bool Write(Span<byte> s, ref ushort count)
@@ -39,10 +68,13 @@ public class PlayerInfoReq
 			count += sizeof(short);
 			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), duration);
 			count += sizeof(float);
+			success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)this.attributes.Count);
+			count += sizeof(ushort);
+			foreach(Attribute attribute in attributes)
+			    attribute.Write(s, ref count);
 	        return success;
 	    }
 	}
-	        
 	public List<Skill> skills = new List<Skill>();
 	
     public void Read(ArraySegment<byte> segment)
@@ -53,7 +85,9 @@ public class PlayerInfoReq
         count += sizeof(ushort);
         count += sizeof(ushort);
 
-        this.playerId = BitConverter.ToInt64(s.Slice(count, s.Length - count));
+        this.testByte = (byte)segment.Array[segment.Offset + count];
+		count += sizeof(byte);
+		this.playerId = BitConverter.ToInt64(s.Slice(count, s.Length - count));
 		count += sizeof(long);
 		ushort nameLen = BitConverter.ToUInt16(s.Slice(count, s.Length - count));
 		count += sizeof(ushort);
@@ -81,7 +115,9 @@ public class PlayerInfoReq
         count += sizeof(ushort);
         success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), (ushort)PacketID.PlayerInfoReq);
         count += sizeof(ushort);
-        success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), playerId);
+        segment.Array[segment.Offset + count] = (byte)this.testByte;
+		count += sizeof(byte);
+		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), playerId);
 		count += sizeof(long);
 		ushort nameLen = (ushort)Encoding.Unicode.GetBytes(name, 0, name.Length, segment.Array, segment.Offset + count + sizeof(ushort));
 		success &= BitConverter.TryWriteBytes(s.Slice(count, s.Length - count), nameLen);
