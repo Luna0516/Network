@@ -9,7 +9,15 @@ public enum PacketID
 	
 }
 
-public class PlayerInfoReq
+interface IPacket
+{
+	ushort Protocol { get; }
+	void Read(ArraySegment<byte> segment);
+	ArraySegment<byte> Write();
+}
+
+
+public class PlayerInfoReq : IPacket
 {
     public byte testByte;
 	public long playerId;
@@ -77,6 +85,9 @@ public class PlayerInfoReq
 	}
 	public List<Skill> skills = new List<Skill>();
 	
+
+    public ushort Protocol => (ushort)PacketID.PlayerInfoReq;
+
     public void Read(ArraySegment<byte> segment)
     {
         ushort count = 0;
@@ -134,9 +145,12 @@ public class PlayerInfoReq
     }
 }
 
-public class Test
+public class Test : IPacket
 {
     public int testInt;
+
+    public ushort Protocol => (ushort)PacketID.Test;
+
     public void Read(ArraySegment<byte> segment)
     {
         ushort count = 0;

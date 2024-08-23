@@ -9,6 +9,8 @@ namespace Server
 
         static void Main(string[] args)
         {
+            PacketManager.Instance.Register();
+
             Console.WriteLine("<<<<<<<<<<<Server>>>>>>>>>>");
             // DNS (Domain Name System)
             string host = Dns.GetHostName();
