@@ -70,8 +70,7 @@ using System.Text;
 
 public enum PacketID
 {{
-    {0}
-}}
+    {0}}}
 
 interface IPacket
 {{
