@@ -21,7 +21,7 @@ namespace DummyClient
             {
                 try
                 {
-                    SessionManager.Instance.SendForEach();
+                    SessionManager.Instance.SendForEach(); 
                 }
                 catch (Exception e)
                 {
