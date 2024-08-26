@@ -11,6 +11,7 @@ namespace Server
         static void Main(string[] args)
         {
             Console.WriteLine("<<<<<<<<<<<Server>>>>>>>>>>");
+
             // DNS (Domain Name System)
             string host = Dns.GetHostName();
             IPHostEntry ipHost = Dns.GetHostEntry(host);
@@ -22,6 +23,9 @@ namespace Server
 
             while (true)
             {
+                Room.Push(() => Room.Flush());
+                Thread.Sleep(250);
+
                 if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Q)
                 {
                     break;

@@ -11,6 +11,7 @@ namespace ServerCore
         public sealed override int OnReceive(ArraySegment<byte> buffer)
         {
             int processLenght = 0;
+            int packetCount = 0;
 
             while (true)
             {
@@ -26,11 +27,14 @@ namespace ServerCore
                 // 여기까지 왔으면 패킷 조립 가능
                 // struct라서 힙 영역에 할당X , 스택에 복사를 하는 개념
                 OnReceivePacket(new ArraySegment<byte>(buffer.Array, buffer.Offset, dataSize));
+                packetCount++;
 
                 processLenght += dataSize;
-
                 buffer = new ArraySegment<byte> (buffer.Array, buffer.Offset + dataSize, buffer.Count - dataSize);
             }
+
+            if(packetCount > 1)
+                Console.WriteLine($"패킷 모아보내기 : {packetCount}");
 
             return processLenght;
         }
@@ -44,7 +48,7 @@ namespace ServerCore
 
         int _disconnected = 0;
 
-        ReceiveBuffer _receiveBuffer = new ReceiveBuffer(1024);
+        ReceiveBuffer _receiveBuffer = new ReceiveBuffer(65535);
 
         object _lock = new object();
         Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
@@ -78,6 +82,21 @@ namespace ServerCore
             _sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
 
             RegisterReceive();
+        }
+
+        public void Send(List<ArraySegment<byte>> sendBuffList)
+        {
+            if (sendBuffList.Count == 0)
+                return;
+
+            lock (_lock)
+            {
+                foreach(ArraySegment<byte> sendBuff in sendBuffList)
+                    _sendQueue.Enqueue(sendBuff);
+
+                if (_pendingList.Count == 0)
+                    RegisterSend();
+            }
         }
 
         public void Send(ArraySegment<byte> sendBuff)
