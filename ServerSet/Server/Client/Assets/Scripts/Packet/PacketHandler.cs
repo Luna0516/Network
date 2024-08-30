@@ -9,9 +9,16 @@ class PacketHandler
         S_Chat chatPacket = packet as S_Chat;
         ServerSession serverSession = session as ServerSession;
 
-        if (chatPacket.playerId == 1) 
-            Debug.Log(chatPacket.chat);
         // if (chatPacket.playerId == 1)
-            //Console.WriteLine(chatPacket.chat);
+        { 
+            Debug.Log(chatPacket.chat);
+
+            // 유니티 코드 접근 못함!
+            GameObject go = GameObject.Find("Player");
+            if (go == null)
+                Debug.Log("Player Not Found");
+            else
+                Debug.Log("Player Found");
+        }
     }
 }
