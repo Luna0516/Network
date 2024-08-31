@@ -44,7 +44,7 @@ public class NetworkManager : MonoBehaviour
             C_Chat chatPacket = new C_Chat();
             chatPacket.chat = "Hello Unity !";
             ArraySegment<byte> segment = chatPacket.Write();
-
+             
             _session.Send(segment);
         }
     }
