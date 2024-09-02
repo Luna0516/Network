@@ -8,7 +8,7 @@
 	</packet>
 	<packet name="C_LeaveGame">
 	</packet>
-	<packet name="S_BroadcastEnterGame">
+	<packet name="S_BroadcastLeaveGame">
 		<int name="playerId"/>
 	</packet>
 	<packet name="S_PlayerList">
