@@ -1,6 +1,7 @@
 using ServerCore;
 using System.Text;
 using System;
+using System.Collections.Generic;
 
 public enum PacketID
 {
@@ -189,7 +190,7 @@ public class S_PlayerList : IPacket
 		for(int i = 0; i < playerLen; i++)
 		{
 		    Player player = new Player();
-		    player.Read(s, ref count);
+		    player.Read(segment, ref count);
 		    players.Add(player);
 		}
     }
