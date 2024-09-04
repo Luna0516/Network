@@ -3,7 +3,7 @@ using ServerCore;
 namespace Server
 {
     class GameRoom : IJobQueue
-    {
+    { 
         List<ClientSession> _sessions = new List<ClientSession>();
         JobQueue _jobQueue = new JobQueue();
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
