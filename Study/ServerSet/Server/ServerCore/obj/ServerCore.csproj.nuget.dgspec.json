@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\GitHub\\Network\\ServerSet\\Server\\ServerCore\\ServerCore.csproj": {}
+    "C:\\GitHub\\Network\\Study\\ServerSet\\Server\\ServerCore\\ServerCore.csproj": {}
   },
   "projects": {
-    "C:\\GitHub\\Network\\ServerSet\\Server\\ServerCore\\ServerCore.csproj": {
+    "C:\\GitHub\\Network\\Study\\ServerSet\\Server\\ServerCore\\ServerCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\GitHub\\Network\\ServerSet\\Server\\ServerCore\\ServerCore.csproj",
+        "projectUniqueName": "C:\\GitHub\\Network\\Study\\ServerSet\\Server\\ServerCore\\ServerCore.csproj",
         "projectName": "ServerCore",
-        "projectPath": "C:\\GitHub\\Network\\ServerSet\\Server\\ServerCore\\ServerCore.csproj",
+        "projectPath": "C:\\GitHub\\Network\\Study\\ServerSet\\Server\\ServerCore\\ServerCore.csproj",
         "packagesPath": "C:\\Users\\sunstay\\.nuget\\packages\\",
-        "outputPath": "C:\\GitHub\\Network\\ServerSet\\Server\\ServerCore\\obj\\",
+        "outputPath": "C:\\GitHub\\Network\\Study\\ServerSet\\Server\\ServerCore\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sunstay\\AppData\\Roaming\\NuGet\\NuGet.Config",

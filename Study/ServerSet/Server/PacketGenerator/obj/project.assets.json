@@ -32,11 +32,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\GitHub\\Network\\ServerSet\\Server\\PacketGenerator\\PacketGenerator.csproj",
+      "projectUniqueName": "C:\\GitHub\\Network\\Study\\ServerSet\\Server\\PacketGenerator\\PacketGenerator.csproj",
       "projectName": "PacketGenerator",
-      "projectPath": "C:\\GitHub\\Network\\ServerSet\\Server\\PacketGenerator\\PacketGenerator.csproj",
+      "projectPath": "C:\\GitHub\\Network\\Study\\ServerSet\\Server\\PacketGenerator\\PacketGenerator.csproj",
       "packagesPath": "C:\\Users\\sunstay\\.nuget\\packages\\",
-      "outputPath": "C:\\GitHub\\Network\\ServerSet\\Server\\PacketGenerator\\obj\\",
+      "outputPath": "C:\\GitHub\\Network\\Study\\ServerSet\\Server\\PacketGenerator\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\sunstay\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -53,8 +53,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\GitHub\\Network\\ServerSet\\Server\\ServerCore\\ServerCore.csproj": {
-              "projectPath": "C:\\GitHub\\Network\\ServerSet\\Server\\ServerCore\\ServerCore.csproj"
+            "C:\\GitHub\\Network\\Study\\ServerSet\\Server\\ServerCore\\ServerCore.csproj": {
+              "projectPath": "C:\\GitHub\\Network\\Study\\ServerSet\\Server\\ServerCore\\ServerCore.csproj"
             }
           }
         }
