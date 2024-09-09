@@ -1,0 +1,15 @@
+C:\GitHub\Network\Practice\Server\Client_A\bin\Debug\net8.0\Client_A.exe
+C:\GitHub\Network\Practice\Server\Client_A\bin\Debug\net8.0\Client_A.deps.json
+C:\GitHub\Network\Practice\Server\Client_A\bin\Debug\net8.0\Client_A.runtimeconfig.json
+C:\GitHub\Network\Practice\Server\Client_A\bin\Debug\net8.0\Client_A.dll
+C:\GitHub\Network\Practice\Server\Client_A\bin\Debug\net8.0\Client_A.pdb
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.GeneratedMSBuildEditorConfig.editorconfig
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.AssemblyInfoInputs.cache
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.AssemblyInfo.cs
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.csproj.CoreCompileInputs.cache
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.sourcelink.json
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.dll
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\refint\Client_A.dll
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.pdb
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.genruntimeconfig.cache
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\ref\Client_A.dll
