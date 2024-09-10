@@ -6,49 +6,43 @@ namespace ServerCore
 {
     class Program
     {
-        static int _listener = 10;
+        static Listener _listener = new Listener();
 
-        static string _greetings = "Welcome to MMORPG Server!";
+        static void OnAcceptHandler(Socket clientSocket)
+        {
+            try
+            {
+                string greetings = "Welcome to MMORPG Server!";
+
+                // 받는다
+                byte[] recvBuffer = new byte[1024];
+                int recvBytes = clientSocket.Receive(recvBuffer);
+                string recvData = Encoding.UTF8.GetString(recvBuffer, 0, recvBytes);
+                Console.WriteLine($"[From Client] : {recvData}");
+
+                // 보낸다
+                byte[] sendBuffer = Encoding.UTF8.GetBytes(greetings);
+                clientSocket.Send(sendBuffer);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
 
         static void Main(string[] args)
         {
             string host = Dns.GetHostName();
             IPHostEntry ipHost = Dns.GetHostEntry(host);
-            IPAddress ipaddr = ipHost.AddressList[0];
-            IPEndPoint endPoint = new IPEndPoint(ipaddr, 8000);
+            IPAddress ipAddr = ipHost.AddressList[0];
+            IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
-            Socket listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            _listener.Init(endPoint, OnAcceptHandler);
+            Console.WriteLine("Listening...");
 
-            try
+            while (true)
             {
-
-                listenSocket.Bind(endPoint);
-                listenSocket.Listen(_listener);
-
-                while (true)
-                {
-                    Console.WriteLine("Listening...");
-
-                    Socket clientSocket = listenSocket.Accept();
-                    // 받는다
-                    byte[] recvbuffer = new byte[1024];
-                    int bytes = clientSocket.Receive(recvbuffer);
-                    string data = Encoding.UTF8.GetString(recvbuffer, 0, bytes);
-                    Console.WriteLine($"[From Client] : {data}");
-
-                    // 보낸다
-                    byte[] sendBuffer = Encoding.UTF8.GetBytes(_greetings);
-                    clientSocket.Send(sendBuffer);
-
-                    // 내보낸다
-                    clientSocket.Shutdown(SocketShutdown.Both);
-                    clientSocket.Close();
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
+                Thread.Sleep(10);
             }
         }
     }
