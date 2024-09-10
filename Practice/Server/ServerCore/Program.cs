@@ -14,15 +14,16 @@ namespace ServerCore
             {
                 string greetings = "Welcome to MMORPG Server!";
 
-                // 받는다
-                byte[] recvBuffer = new byte[1024];
-                int recvBytes = clientSocket.Receive(recvBuffer);
-                string recvData = Encoding.UTF8.GetString(recvBuffer, 0, recvBytes);
-                Console.WriteLine($"[From Client] : {recvData}");
+                Session session = new Session();
+                session.Init(clientSocket);
 
                 // 보낸다
                 byte[] sendBuffer = Encoding.UTF8.GetBytes(greetings);
-                clientSocket.Send(sendBuffer);
+                session.Send(sendBuffer);
+
+                Thread.Sleep(1000);
+
+                session.Disconnect();
             }
             catch (Exception ex)
             {
@@ -32,6 +33,8 @@ namespace ServerCore
 
         static void Main(string[] args)
         {
+            Console.WriteLine("<========== Server Core ==========>");
+
             string host = Dns.GetHostName();
             IPHostEntry ipHost = Dns.GetHostEntry(host);
             IPAddress ipAddr = ipHost.AddressList[0];
