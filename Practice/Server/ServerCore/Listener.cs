@@ -7,14 +7,14 @@ namespace ServerCore
     {
         Socket _listenSocket;
 
-        Action<Socket> _onAcceptHandler;
+        Func<Session> _sessionFactory;
 
         SocketAsyncEventArgs _args = new SocketAsyncEventArgs();
 
-        public void Init(EndPoint endPoint, Action<Socket> onAcceptHandler, int listener = 10)
+        public void Init(EndPoint endPoint, Func<Session> sessionFactory, int listener = 10)
         {
             _listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            _onAcceptHandler += onAcceptHandler;
+            _sessionFactory += sessionFactory;
 
             _listenSocket.Bind(endPoint);
             _listenSocket.Listen(listener);
@@ -35,7 +35,9 @@ namespace ServerCore
         {
             if(_args.SocketError == SocketError.Success)
             {
-                _onAcceptHandler.Invoke(_args.AcceptSocket);
+                Session session = _sessionFactory.Invoke();
+                session.Start(_args.AcceptSocket);
+                session.OnConnected(_args.AcceptSocket.RemoteEndPoint);
             }
             else
             {
