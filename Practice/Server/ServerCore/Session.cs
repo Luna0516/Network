@@ -5,8 +5,6 @@ namespace ServerCore
 {
     class Session
     {
-        bool _pending = false;
-
         int _disconnected = 0;
         
         Socket _socket;
@@ -15,6 +13,8 @@ namespace ServerCore
         SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
 
         Queue<byte[]> _sendQueue = new Queue<byte[]>();
+
+        List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
         object _lock = new object();
 
@@ -36,7 +36,7 @@ namespace ServerCore
             {
                 _sendQueue.Enqueue(sendBuff);
 
-                if(!_pending)
+                if(_pendingList.Count == 0)
                     RegisterSend();
             }
         }
@@ -53,11 +53,16 @@ namespace ServerCore
         #region 네트워크 통신
         private void RegisterSend()
         {
-            _pending = true;
+            _pendingList.Clear();
 
-            byte[] buff = _sendQueue.Dequeue();
-            _sendArgs.SetBuffer(buff, 0, buff.Length);
-
+            while (_sendQueue.Count > 0)
+            {
+                byte[] buff = _sendQueue.Dequeue();
+                _pendingList.Add(new ArraySegment<byte>(buff, 0, buff.Length));
+            }
+            
+            _sendArgs.BufferList = _pendingList;
+                
             if (!_socket.SendAsync(_sendArgs))
                 OnSendCompleted();
         }
@@ -70,10 +75,11 @@ namespace ServerCore
                 {
                     try
                     {
+                        _sendArgs.BufferList = null;
+                        _pendingList.Clear();
+
                         if (_sendQueue.Count > 0)
                             RegisterSend();
-                        else
-                            _pending = false;
                     }
                     catch (Exception ex)
                     {
@@ -82,6 +88,7 @@ namespace ServerCore
                 }
                 else
                 {
+                    Console.WriteLine($"Send failed with error: {_sendArgs.SocketError}");
                     Disconnect();
                 }
             }

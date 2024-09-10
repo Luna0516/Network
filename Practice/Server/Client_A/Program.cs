@@ -30,9 +30,16 @@ namespace Client_A
 
                 // 받는다
                 byte[] recvBuffer = new byte[1024];
-                int bytes = socket.Receive(recvBuffer);
-                string data = Encoding.UTF8.GetString(recvBuffer, 0, bytes);
-                Console.WriteLine($"[From Client] : {data}");
+                int recvBytes = socket.Receive(recvBuffer); 
+                if (recvBytes > 0)
+                {
+                    string recvData = Encoding.UTF8.GetString(recvBuffer, 0, recvBytes);
+                    Console.WriteLine($"[From Server] {recvData}");
+                }
+                else
+                {
+                    Console.WriteLine("Failed to receive data from the server.");
+                }
 
                 // 나간다
                 socket.Shutdown(SocketShutdown.Both);
