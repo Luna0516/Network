@@ -1,10 +1,9 @@
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
 namespace ServerCore
 {
-    abstract class Session
+    public abstract class Session
     {
         int _disconnected = 0;
         
