@@ -13,3 +13,10 @@ C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\refint\Client_A.dll
 C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.pdb
 C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.genruntimeconfig.cache
 C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\ref\Client_A.dll
+C:\GitHub\Network\Practice\Server\Client_A\bin\Debug\net8.0\ServerCore.deps.json
+C:\GitHub\Network\Practice\Server\Client_A\bin\Debug\net8.0\ServerCore.runtimeconfig.json
+C:\GitHub\Network\Practice\Server\Client_A\bin\Debug\net8.0\ServerCore.exe
+C:\GitHub\Network\Practice\Server\Client_A\bin\Debug\net8.0\ServerCore.dll
+C:\GitHub\Network\Practice\Server\Client_A\bin\Debug\net8.0\ServerCore.pdb
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.csproj.AssemblyReference.cache
+C:\GitHub\Network\Practice\Server\Client_A\obj\Debug\net8.0\Client_A.csproj.Up2Date

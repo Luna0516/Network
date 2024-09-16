@@ -12,10 +12,6 @@ namespace ServerCore
 
             byte[] sendBuff = Encoding.UTF8.GetBytes("Welcome to MMORPG Server!");
             Send(sendBuff);
-
-            Thread.Sleep(1000);
-
-            Disconnect();
         }
 
         public override void OnDisconnected(EndPoint endPoint)
