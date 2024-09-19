@@ -12,6 +12,13 @@ namespace Server
 
             byte[] sendBuff = Encoding.UTF8.GetBytes("Welcome to MMORPG Server!");
             Send(sendBuff);
+
+            Thread.Sleep(100);
+            Knight knight = new Knight(100, 10);
+            byte[] serializedData = knight.Serialize();
+            ArraySegment<byte> sendBuffer = new ArraySegment<byte>(serializedData);
+
+            Send(sendBuffer);
         }
 
         public override void OnDisconnected(EndPoint endPoint)

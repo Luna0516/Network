@@ -23,8 +23,16 @@ namespace Client_B
 
         public override int OnReceive(ArraySegment<byte> buffer)
         {
-            string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
-            Console.WriteLine($"[From Server] {recvData}");
+            if (buffer.Count == 8)
+            {
+                Knight knight = Knight.Deserialize(buffer.Array.Skip(buffer.Offset).Take(buffer.Count).ToArray());
+                Console.WriteLine($"[From Server] Knight HP: {knight.Hp}, Attack: {knight.Attack}");
+            }
+            else
+            {
+                string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
+                Console.WriteLine($"[From Server] {recvData}");
+            }
 
             return buffer.Count;
         }
