@@ -9,6 +9,8 @@ namespace ServerCore
         
         Socket _socket;
 
+        ReceiveBuffer _receiveBuffer = new ReceiveBuffer(1024);
+
         SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
         SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
 
@@ -20,19 +22,19 @@ namespace ServerCore
 
         public abstract void OnConnected(EndPoint endPoint);
         public abstract void OnDisconnected(EndPoint endPoint);
-        public abstract void OnReceive(ArraySegment<byte> buffer);
+        public abstract int OnReceive(ArraySegment<byte> buffer);
         public abstract void OnSend(int numOfBytes);
 
         public void Start(Socket socket)
         {
             _socket = socket;
 
-            _recvArgs.Completed += (_, _) => OnRecvCompleted();
+            _recvArgs.Completed += (_, _) => OnReceiveCompleted();
             _recvArgs.SetBuffer(new byte[1024], 0, 1024);
 
             _sendArgs.Completed += (_, _) => OnSendCompleted();
 
-            RegisterRecv();
+            RegisterReceive();
         }
 
         public void Send(byte[] sendBuff)
@@ -101,21 +103,43 @@ namespace ServerCore
             }
         }
 
-        private void RegisterRecv()
+        private void RegisterReceive()
         {
+            _receiveBuffer.Clean();
+
+            ArraySegment<byte> segment = _receiveBuffer.WriteSegment;
+            _recvArgs.SetBuffer(segment.Array, segment.Offset, segment.Count);
+
             if(!_socket.ReceiveAsync(_recvArgs))
-                OnRecvCompleted();
+                OnReceiveCompleted();
         }
 
-        private void OnRecvCompleted()
+        private void OnReceiveCompleted()
         {
             if (_recvArgs.BytesTransferred > 0 && _recvArgs.SocketError == SocketError.Success)
             {
                 try
                 {
-                    OnReceive(new ArraySegment<byte>(_recvArgs.Buffer, _recvArgs.Offset, _recvArgs.BytesTransferred));
+                    if(!_receiveBuffer.OnWrite(_recvArgs.BytesTransferred))
+                    {
+                        Disconnect();
+                        return;
+                    }
 
-                    RegisterRecv();
+                    int processLength = OnReceive(_receiveBuffer.ReadSegment);
+                    if (processLength < 0 || _receiveBuffer.DataSize < processLength)
+                    {
+                        Disconnect();
+                        return;
+                    }
+
+                    if (!_receiveBuffer.OnRead(processLength))
+                    {
+                        Disconnect();
+                        return;
+                    }
+
+                    RegisterReceive();
                 }
                 catch (Exception ex)
                 {
