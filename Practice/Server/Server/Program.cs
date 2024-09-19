@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Server
 {
-    class GameSession : Session
+    class GameSession : PacketSession
     {
         public override void OnConnected(EndPoint endPoint)
         {
@@ -12,13 +12,6 @@ namespace Server
 
             byte[] sendBuff = Encoding.UTF8.GetBytes("Welcome to MMORPG Server!");
             Send(sendBuff);
-
-            Thread.Sleep(100);
-            Knight knight = new Knight(100, 10);
-            byte[] serializedData = knight.Serialize();
-            ArraySegment<byte> sendBuffer = new ArraySegment<byte>(serializedData);
-
-            Send(sendBuffer);
         }
 
         public override void OnDisconnected(EndPoint endPoint)
@@ -26,12 +19,11 @@ namespace Server
             Console.WriteLine($"OnDisconnected : {endPoint}");
         }
 
-        public override int OnReceive(ArraySegment<byte> buffer)
+        public override void OnReceivePacket(ArraySegment<byte> buffer)
         {
-            string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
-            Console.WriteLine($"[From Client] {recvData}");
-
-            return buffer.Count;
+            ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+            ushort Id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + 2);
+            Console.WriteLine($"ReceivePacketId : {Id}, Size : {size}");
         }
 
         public override void OnSend(int numOfBytes)
@@ -39,7 +31,6 @@ namespace Server
             Console.WriteLine($"Transferred bytes : {numOfBytes}");
         }
     }
-
 
     class Program
     {

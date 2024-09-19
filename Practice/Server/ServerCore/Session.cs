@@ -110,7 +110,8 @@ namespace ServerCore
             ArraySegment<byte> segment = _receiveBuffer.WriteSegment;
             _recvArgs.SetBuffer(segment.Array, segment.Offset, segment.Count);
 
-            if(!_socket.ReceiveAsync(_recvArgs))
+            bool pending = _socket.ReceiveAsync(_recvArgs);
+            if (pending == false)
                 OnReceiveCompleted();
         }
 

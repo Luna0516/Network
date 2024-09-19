@@ -10,10 +10,29 @@ namespace Client_A
         {
             Console.WriteLine($"OnConnected : {endPoint}");
 
-            // 보낸다
-            string greetings = "Hello! I am Client_A";
-            byte[] sendBuffer = Encoding.UTF8.GetBytes(greetings);
-            Send(sendBuffer);
+            //string greetings = "Hello! I am Client_A";
+            //byte[] sendData = Encoding.UTF8.GetBytes(greetings);
+            //ArraySegment<byte> sendBuffer = new ArraySegment<byte>(sendData);
+            //Send(sendBuffer);
+
+            Packet packet = new Packet
+            {
+                Size = 4,
+                PacketId = 7
+            };
+            Packet packet2 = new Packet
+            {
+                Size = 4,
+                PacketId = 3
+            };
+
+            byte[] serializedPacket = packet.Serialize();
+            ArraySegment<byte> sendBuffer2 = new ArraySegment<byte>(serializedPacket);
+            Send(sendBuffer2);
+
+            byte[] serializedPacket2 = packet2.Serialize();
+            ArraySegment<byte> sendBuffer3 = new ArraySegment<byte>(serializedPacket2);
+            Send(sendBuffer3);
         }
 
         public override void OnDisconnected(EndPoint endPoint)
@@ -23,16 +42,8 @@ namespace Client_A
 
         public override int OnReceive(ArraySegment<byte> buffer)
         {
-            if (buffer.Count == 8)
-            {
-                Knight knight = Knight.Deserialize(buffer.Array.Skip(buffer.Offset).Take(buffer.Count).ToArray());
-                Console.WriteLine($"[From Server] Knight HP: {knight.Hp}, Attack: {knight.Attack}");
-            }
-            else
-            {
-                string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
-                Console.WriteLine($"[From Server] {recvData}");
-            }
+            string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
+            Console.WriteLine($"[From Server] {recvData}");
 
             return buffer.Count;
         }
